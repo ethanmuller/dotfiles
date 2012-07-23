@@ -1,0 +1,22 @@
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+let g:ragtag_global_maps = 1
+
+syntax on
+set number
+set noautochdir
+set ignorecase smartcase
+set tabstop=2
+set shiftwidth=2
+filetype plugin indent on
+colorscheme desert
+
+let mapleader = ","
+
+nmap ' `
+
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+nmap <leader><leader>v :tabedit $MYVIMRC<CR>
+nmap <leader>e :edit %%
+nmap <leader>v :view %%

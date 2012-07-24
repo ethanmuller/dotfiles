@@ -29,7 +29,7 @@ set hidden
 "turn on syntax highlighting
 syntax on
 
-color louver
+color dusk
 
 " ================ Search Settings  =================
 

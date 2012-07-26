@@ -98,6 +98,9 @@ set sidescroll=1
 " Set <leader> to comma
 let mapleader = ","
 
+" quick :e
+nmap <leader>e :e 
+
 " When going to marks, go to character instead of line
 nmap ' `
 

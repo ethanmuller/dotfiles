@@ -98,8 +98,11 @@ set sidescroll=1
 " Set <leader> to comma
 let mapleader = ","
 
-" quick :e
-nmap <leader>e :e 
+" edit in current directory
+nmap <leader>e :e %%
+
+" switch to last-used file
+nmap <leader><leader> <C-^>
 
 " When going to marks, go to character instead of line
 nmap ' `
@@ -114,4 +117,4 @@ nmap <leader>v :tabedit $MYVIMRC<CR>
 nmap <leader>s :source $MYVIMRC<CR>
 
 " MRU shortcut
-nmap <leader>m :MRU<CR>
+nmap <leader>r :MRU<CR>

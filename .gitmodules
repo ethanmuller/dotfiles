@@ -16,3 +16,6 @@
 [submodule "vim/bundle/ragtag"]
 	path = vim/bundle/ragtag
 	url = git://github.com/tpope/vim-ragtag.git
+[submodule "vim/bundle/nerd-commenter"]
+	path = vim/bundle/nerd-commenter
+	url = git://github.com/vim-scripts/The-NERD-Commenter.git

@@ -29,6 +29,7 @@ set hidden
 syntax on
 
 color desert
+set transparency=1
 
 " ================ Search Settings  =================
 
@@ -93,7 +94,7 @@ set scrolloff=8         "Start scrolling when we're 8 lines away from margins
 set sidescrolloff=15
 set sidescroll=1
 
-" ================ Bindings ========================
+" ================ Mappings ========================
 
 " Set <leader> to comma
 let mapleader = ","
@@ -118,3 +119,24 @@ nmap <leader>s :source $MYVIMRC<CR>
 
 " MRU shortcut
 nmap <leader>r :MRU<CR>
+
+" Move around splits with <c-hjkl>
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Rename file
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! RenameFile()
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        exec ':silent !rm ' . old_name
+        redraw!
+    endif
+endfunction
+map <leader>n :call RenameFile()<cr>

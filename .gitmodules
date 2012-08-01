@@ -19,3 +19,12 @@
 [submodule "vim/bundle/nerd-commenter"]
 	path = vim/bundle/nerd-commenter
 	url = git://github.com/vim-scripts/The-NERD-Commenter.git
+[submodule "vim/bundle/conque"]
+	path = vim/bundle/conque
+	url = git://github.com/jordansissel/conque.git
+[submodule "vim/bundle/matchtag"]
+	path = vim/bundle/matchtag
+	url = git://github.com/gregsexton/MatchTag.git
+[submodule "vim/bundle/repeat"]
+	path = vim/bundle/repeat
+	url = git://github.com/tpope/vim-repeat.git

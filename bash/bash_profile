@@ -2,8 +2,8 @@
 # . ~/dotfiles/bash/config
 # . ~/dotfiles/bash/aliases
 
-export PATH=${PATH}:$HOME/dotfiles/scripts
-export PATH=${PATH}:$HOME/.rvm/scripts/rvm # add RVM to path
+export PATH=${PATH}:$HOME/dotfiles/scripts:$HOME/bin
+# export PATH=${PATH}:$HOME/.rvm/scripts/rvm # add RVM to path
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 mkcd () {

@@ -1,33 +1,10 @@
+# . ~/dotfiles/bash/env
+# . ~/dotfiles/bash/config
+# . ~/dotfiles/bash/aliases
+
 export PATH=${PATH}:$HOME/dotfiles/scripts
 export PATH=${PATH}:$HOME/.rvm/scripts/rvm # add RVM to path
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages/
-alias gpp="g++"
-tab () # new tab from current dir
-{
-osascript -e "
-tell application \"iTerm\"
- tell the first terminal
-	 launch session \"Default Session\"
-	 tell the last session
-		write text \"cd $(pwd)\"
-	end tell
- end tell
-end tell"
-}
-
-
-##
-# Your previous /Users/ethanmuller/.bash_profile file was backed up as /Users/ethanmuller/.bash_profile.macports-saved_2011-05-21_at_19:11:28
-##
-
-# MacPorts Installer addition on 2011-05-21_at_19:11:28: adding an appropriate PATH variable for use with MacPorts.
-export PATH=/opt/local/bin:/opt/local/sbin:$PATH
-# Finished adapting your PATH environment variable for use with MacPorts.
-
-alias wget="curl -O"
-alias gotopydir="cd ~/programming/python"
-
 
 mkcd () {
 	mkdir -p "$*"

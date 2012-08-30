@@ -1,0 +1,25 @@
+alias c=clear
+alias h=history
+alias l='ls -l'
+alias who8080='lsof -i :8080'
+
+#[GIT]
+alias git=/usr/local/git/bin/git
+alias g='cat ~/.gitconfig'
+alias gp='cat ~/bin/dotfiles/bash/aliases'
+alias gs='git status '
+alias ga='git add '
+alias gb='git branch '
+alias gc='git commit'
+alias gd='git diff'
+alias go='git checkout '
+alias gl='git pull --rebase'
+alias gk='gitk --all&'
+alias gx='gitx --all'
+alias gpb='git publish-branch'
+alias got='git '
+alias get='git '
+
+#[VIM]
+alias vim=/Applications/MacVim.app/Contents/MacOS/Vim
+alias v=/Applications/MacVim.app/Contents/MacOS/Vim

@@ -38,7 +38,8 @@ set viminfo='100,f1      "Save up to 100 marks, enable capital marks
 
 " ================ Swap Files ==============
 
-set directory^=$HOME/.vim/backups
+set backupdir=$HOME/.vim/backups
+set directory=$HOME/.vim/backups
 
 " ================ Persistent Undo ==================
 " Keep undo history across sessions, by storing in file.

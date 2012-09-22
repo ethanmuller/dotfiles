@@ -94,6 +94,11 @@ set scrolloff=8         "Start scrolling when we're 8 lines away from margins
 set sidescrolloff=15
 set sidescroll=1
 
+" ================ Powerline ========================
+
+set laststatus=2   " Always show the statusline
+set encoding=utf-8 " Necessary to show Unicode glyphs
+
 " ================ Mappings ========================
 
 " Set <leader> to comma
@@ -127,11 +132,17 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
 " Easier first/last characters on current line
-noremap H ^
-noremap L $
+"unmap L
+"unmap H
+"nnoremap H ^
+"nnoremap L $
 
 " toggle hlsearch and report status with <F4>
-:noremap <F4> :set hlsearch! hlsearch?<CR>
+"noremap <F4> :set hlsearch! hlsearch?<CR>
+
+" Map ctrl-n and ctrl-N to next and previous in location list (bad idea?)
+"nmap <c-n> :lnext<CR>
+"nmap <c-N> :lprevious<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Rename file

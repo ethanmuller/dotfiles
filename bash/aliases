@@ -1,3 +1,4 @@
+alias ap='cat ~/dotfiles/bash/aliases'
 alias c=clear
 alias h=history
 alias l='ls -l'
@@ -6,8 +7,7 @@ alias who8080='lsof -i :8080'
 #[GIT]
 alias git=/usr/local/git/bin/git
 alias g='cat ~/.gitconfig'
-alias gp='cat ~/bin/dotfiles/bash/aliases'
-alias gs='git status '
+alias gs='git s' # pretty git status
 alias ga='git add '
 alias gb='git branch '
 alias gc='git commit'
@@ -20,6 +20,24 @@ alias gpb='git publish-branch'
 alias got='git '
 alias get='git '
 
+#[RoR]
+alias ror='cd ~/dev/_rails'
+alias cof='cd ~/dev/_coffee'
+alias sr='script/rails'
+alias sc='script/rails console'
+alias ss='script/rails server'
+alias rs='rspec'
+alias cu='cucumber -r features'
+alias cuw='cucumber --profile wip'
+alias ropen='open http://localhost:3000'
+alias jopen='open http://localhost:3000/jasmine'
+
 #[VIM]
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim
 alias v=/Applications/MacVim.app/Contents/MacOS/Vim
+
+#[MYSQL]
+alias mysql=/usr/local/mysql/bin/mysql
+alias mysqladmin=/usr/local/mysql/bin/mysqladminlias c=clear
+alias h=history
+alias who8080='lsof -i :8080'

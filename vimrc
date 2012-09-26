@@ -117,10 +117,10 @@ nmap ' `
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
 
 " Edit .vimrc easily
-nmap <leader>v :tabedit $MYVIMRC<CR>
+nmap <leader>ve :tabedit $MYVIMRC<CR>
 
 " Source .vimrc easily
-nmap <leader>s :source $MYVIMRC<CR>
+nmap <leader>vs :source $MYVIMRC<CR>
 
 " MRU shortcut
 nmap <leader>r :MRU<CR>
@@ -143,6 +143,11 @@ nnoremap <c-l> <c-w>l
 " Map ctrl-n and ctrl-N to next and previous in location list (bad idea?)
 "nmap <c-n> :lnext<CR>
 "nmap <c-N> :lprevious<CR>
+
+" ================ Command-T Folders ========================
+
+nmap <leader>gs :CommandT ./app/assets/stylesheets<CR>
+nmap <leader>gs :CommandT ./app/views/layouts<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Rename file

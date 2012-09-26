@@ -1,7 +1,7 @@
 alias ap='cat ~/dotfiles/bash/aliases'
 alias c=clear
 alias h=history
-alias l='ls -l'
+alias l='ls -Gl'
 alias who8080='lsof -i :8080'
 
 #[GIT]

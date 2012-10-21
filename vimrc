@@ -104,6 +104,9 @@ set encoding=utf-8 " Necessary to show Unicode glyphs
 " Set <leader> to comma
 let mapleader = ","
 
+" Remap , because it's still useful
+noremap \ ,
+
 " edit in current directory
 nmap <leader>e :e %%
 
@@ -125,6 +128,10 @@ nmap <leader>vs :source $MYVIMRC<CR>
 " MRU shortcut
 nmap <leader>r :MRU<CR>
 
+" ALPHABETIZATION!
+nmap <leader>s vii:!sort<CR>
+vmap <leader>s :!sort<CR>
+
 " Move around splits with <c-hjkl>
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
@@ -138,7 +145,7 @@ nnoremap <c-l> <c-w>l
 "nnoremap L $
 
 " toggle hlsearch and report status with <F4>
-"noremap <F4> :set hlsearch! hlsearch?<CR>
+noremap <F4> :set hlsearch! hlsearch?<CR>
 
 " Map ctrl-n and ctrl-N to next and previous in location list (bad idea?)
 "nmap <c-n> :lnext<CR>
@@ -165,8 +172,12 @@ map <leader>n :call RenameFile()<cr>
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Text objects
+" Custom Motions / Text Objects
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" CSS Value
+onoremap <silent>v :<C-U>normal! ^f:llvt;<CR>
+"onoremap <silent>A :<C-U>normal! 
 
 " indent object
 onoremap <silent>ai :<C-U>cal <SID>IndTxtObj(0)<CR>

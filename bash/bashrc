@@ -1,14 +1,10 @@
+# bash
 . ~/dotfiles/bash/aliases
+. ~/dotfiles/bash/env
 . ~/dotfiles/bash/functions
 
-export VISUAL=mvim
-export EDITOR=vim
+# grc
+. "`brew --prefix`/etc/grc.bashrc"
 
-export PATH=${PATH}:$HOME/bin
-export PATH=${PATH}:$HOME/dotfiles/scripts
-export PATH=${PATH}:$HOME/bin/git-tf
-
-# Do I need this?
-#PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-
-source /Users/ethanmuller/.rvm/scripts/rvm
+#rvm
+. ~/.rvm/scripts/rvm

@@ -1,7 +1,15 @@
+alias ae='vim ~/dotfiles/bash/aliases'
 alias ap='cat ~/dotfiles/bash/aliases'
+
 alias c=clear
 alias h=history
 alias l='ls -Gl'
+
+alias cdh='cd ~'
+alias cdg='cd ~/github'
+
+alias spl='cdg && cd pattern-library && ss'
+
 alias who8080='lsof -i :8080'
 alias mopen='open http://localhost:8888'
 

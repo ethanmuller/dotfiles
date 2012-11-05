@@ -28,6 +28,9 @@ set hidden
 "turn on syntax highlighting
 syntax on
 
+" Remove delay when escaping
+set ttimeoutlen=100
+
 color desert
 
 " ================ Search Settings  =================
@@ -144,9 +147,11 @@ nnoremap <c-l> <c-w>l
 " toggle hlsearch and report status with <F4>
 noremap <F4> :set hlsearch! hlsearch?<CR>
 
-" Map ctrl-n and ctrl-N to next and previous in location list (bad idea?)
-"nmap <c-n> :lnext<CR>
-"nmap <c-N> :lprevious<CR>
+" browse quickfix list easily
+nnoremap ]c :cnext<CR>
+nnoremap ]c :cprev<CR>
+nnoremap ]C :clast<CR>
+nnoremap ]C :cfirst<CR>
 
 " ================ Command-T Folders ========================
 

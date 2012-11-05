@@ -1,3 +1,5 @@
+stty -ixon -ixoff # fix for <C-s> in terminal Vim
+
 function take {
     mkdir $1
       cd $1
@@ -21,6 +23,6 @@ function proml {
     local        BLUE="\[\033[0;34m\]"
     local     DEFAULT="\[\033[0m\]"
 
-      PS1="\u: \w $BLUE\$(parse_git_branch) $DEFAULT \n\e[33m➤ \e[0m"
+      PS1="\u: \w $BLUE\$(parse_git_branch) $DEFAULT \n\[\e[33m\]➤ \[\e[0m\]"
 }
 proml

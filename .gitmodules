@@ -28,3 +28,6 @@
 [submodule "vim/bundle/css-color"]
 	path = vim/bundle/css-color
 	url = git://github.com/ap/vim-css-color.git
+[submodule "CSScomb-for-Vim"]
+	path = CSScomb-for-Vim
+	url = https://github.com/miripiruni/CSScomb-for-Vim.git

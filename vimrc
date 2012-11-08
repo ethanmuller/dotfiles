@@ -77,7 +77,7 @@ set nofoldenable        "dont fold by default
 
 set wildmode=list:longest
 set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
-set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
+set wildignore=*.o,*.obj,*~,*.psd,*.jpg,*.png,*.ai "stuff to ignore when tab completing
 set wildignore+=*vim/backups*
 set wildignore+=*sass-cache*
 set wildignore+=*DS_Store*
@@ -112,6 +112,9 @@ nmap <leader>e :e %%
 
 " switch to last-used file
 nmap <leader><leader> <C-^>
+
+" easily set filetype
+nnoremap <leader>f :set filetype=
 
 " When going to marks, go to character instead of line
 nmap ' `
@@ -149,9 +152,9 @@ noremap <F4> :set hlsearch! hlsearch?<CR>
 
 " browse quickfix list easily
 nnoremap ]c :cnext<CR>
-nnoremap ]c :cprev<CR>
+nnoremap [c :cprev<CR>
 nnoremap ]C :clast<CR>
-nnoremap ]C :cfirst<CR>
+nnoremap [C :cfirst<CR>
 
 " ================ Command-T Folders ========================
 

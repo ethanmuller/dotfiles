@@ -150,6 +150,24 @@ nnoremap <c-l> <c-w>l
 " toggle hlsearch and report status with <F4>
 noremap <F4> :set hlsearch! hlsearch?<CR>
 
+" browse buffer list easily
+nnoremap ]b :bnext<CR>
+nnoremap [b :bprev<CR>
+nnoremap ]B :blast<CR>
+nnoremap [B :bfirst<CR>
+
+" browse argument list easily
+nnoremap ]a :next<CR>
+nnoremap [a :prev<CR>
+nnoremap ]A :last<CR>
+nnoremap [A :first<CR>
+
+" browse location list easily
+nnoremap ]l :lnext<CR>
+nnoremap [l :lprev<CR>
+nnoremap ]L :llast<CR>
+nnoremap [L :lfirst<CR>
+
 " browse quickfix list easily
 nnoremap ]c :cnext<CR>
 nnoremap [c :cprev<CR>

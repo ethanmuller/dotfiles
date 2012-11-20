@@ -67,6 +67,8 @@ filetype indent on
 set nowrap       "Don't wrap lines
 set linebreak    "Wrap lines at convenient points
 
+set formatoptions-=cro
+
 " ================ Folds ============================
 
 set foldmethod=indent   "fold based on indent
@@ -115,6 +117,9 @@ nmap <leader><leader> <C-^>
 
 " easily set filetype
 nnoremap <leader>f :set filetype=
+
+" quick :CSScomb
+noremap <leader>c :CSScomb<CR>
 
 " When going to marks, go to character instead of line
 nmap ' `
@@ -173,6 +178,12 @@ nnoremap ]c :cnext<CR>
 nnoremap [c :cprev<CR>
 nnoremap ]C :clast<CR>
 nnoremap [C :cfirst<CR>
+
+" auto-indent pastes
+nnoremap p p=`]
+
+" Y acts like it should
+nnoremap Y y$
 
 " ================ Command-T Folders ========================
 

@@ -1,34 +1,3 @@
 [submodule "vim/bundle/command-t"]
 	path = vim/bundle/command-t
 	url = git://github.com/wincent/Command-T.git
-[submodule "vim/bundle/mru"]
-	path = vim/bundle/mru
-	url = git://github.com/joe6/mru.vim.git
-[submodule "vim/bundle/html5"]
-	path = vim/bundle/html5
-	url = git://github.com/othree/html5.vim.git
-[submodule "vim/bundle/matchit"]
-	path = vim/bundle/matchit
-	url = git://github.com/tmhedberg/matchit.git
-[submodule "vim/bundle/surround"]
-	path = vim/bundle/surround
-	url = git://github.com/tpope/vim-surround.git
-[submodule "vim/bundle/matchtag"]
-	path = vim/bundle/matchtag
-	url = git://github.com/gregsexton/MatchTag.git
-[submodule "vim/bundle/repeat"]
-	path = vim/bundle/repeat
-	url = git://github.com/tpope/vim-repeat.git
-[submodule "vim/bundle/markdown"]
-	path = vim/bundle/markdown
-	url = git://github.com/tpope/vim-markdown.git
-[submodule "vim/bundle/vim-less"]
-	path = vim/bundle/vim-less
-	url = git://github.com/groenewege/vim-less.git
-[submodule "vim/bundle/css-color"]
-	path = vim/bundle/css-color
-	url = git://github.com/ap/vim-css-color.git
-[submodule "vim/bundle/csscomb"]
-	path = vim/bundle/csscomb
-	url = git://github.com/miripiruni/CSScomb-for-Vim.git
-  ignore = dirty

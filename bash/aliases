@@ -1,16 +1,8 @@
-alias ae='vim ~/dotfiles/bash/aliases'
-alias ap='cat ~/dotfiles/bash/aliases'
-
+#[MISC]
 alias c=clear
 alias h=history
 alias l='ls -Gl'
-
-alias cdh='cd ~'
 alias cdg='cd ~/github'
-
-alias spl='cdg && cd pattern-library && ss'
-
-alias who8080='lsof -i :8080'
 alias mopen='open http://localhost:8888'
 
 #[GIT]
@@ -44,9 +36,3 @@ alias jopen='open http://localhost:3000/jasmine'
 #[VIM]
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim
 alias v=/Applications/MacVim.app/Contents/MacOS/Vim
-
-#[MYSQL]
-alias mysql=/usr/local/mysql/bin/mysql
-alias mysqladmin=/usr/local/mysql/bin/mysqladminlias c=clear
-alias h=history
-alias who8080='lsof -i :8080'

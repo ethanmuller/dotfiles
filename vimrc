@@ -51,7 +51,7 @@ set directory=$HOME/.vim/backups
 set undodir=~/.vim/backups
 set undofile
 
-" ================ Indentation ======================
+" ================ Indentation & Formatting ======================
 
 set autoindent
 set smartindent
@@ -96,10 +96,21 @@ set scrolloff=8         "Start scrolling when we're 8 lines away from margins
 set sidescrolloff=15
 set sidescroll=1
 
-" ================ Powerline ========================
+" ================ Statusline  ========================
 
 set laststatus=2   " Always show the statusline
 set encoding=utf-8 " Necessary to show Unicode glyphs
+
+set statusline=%t       "tail of the filename
+set statusline+=%h      "help file flag
+set statusline+=%m      "modified flag
+set statusline+=%r      "read only flag
+set statusline+=%y      "filetype
+set statusline+=%=      "left/right separator
+set statusline+=%c,     "cursor column
+set statusline+=%l/%L   "cursor line/total lines
+set statusline+=\ %P    "percent through file
+
 
 " ================ Mappings ========================
 
@@ -132,9 +143,6 @@ nmap <leader>ve :tabedit $MYVIMRC<CR>
 
 " Source .vimrc easily
 nmap <leader>vs :source $MYVIMRC<CR>
-
-" MRU shortcut
-nmap <leader>r :MRU<CR>
 
 " ALPHABETIZATION!
 nmap <leader>s vii:!sort<CR>
@@ -210,8 +218,10 @@ map <leader>n :call RenameFile()<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " CSS Value
-onoremap <silent>v :<C-U>normal! ^f:llvt;<CR>
-"onoremap <silent>A :<C-U>normal! 
+onoremap <silent>V :<C-U>normal! ^f:lvt;<CR>
+
+" CSS Attribute
+onoremap <silent>A :<C-U>normal! ^vt:<CR>
 
 " indent object
 onoremap <silent>ai :<C-U>cal <SID>IndTxtObj(0)<CR>

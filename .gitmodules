@@ -7,3 +7,9 @@
 [submodule "vim/bundle/repeat"]
 	path = vim/bundle/repeat
 	url = git://github.com/tpope/vim-repeat.git
+[submodule "vim/bundle/textobj-entire"]
+	path = vim/bundle/textobj-entire
+	url = git://github.com/kana/vim-textobj-entire.git
+[submodule "vim/bundle/textobj-user"]
+	path = vim/bundle/textobj-user
+	url = git://github.com/kana/vim-textobj-user.git

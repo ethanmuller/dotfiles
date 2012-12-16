@@ -2,14 +2,18 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
-" =============== Pathogen Initialization ===============
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Pathogen Initialization
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " This loads all the plugins in ~/.vim/bundle
 " Use tpope's pathogen plugin to manage all other plugins
 
 call pathogen#infect()
 call pathogen#helptags()
 
-" ================ General Config ====================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" General Config
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set number                      "Line numbers are good
 set backspace=indent,eol,start  "Allow backspace in insert mode
@@ -33,25 +37,33 @@ set ttimeoutlen=100
 
 color desert
 
-" ================ Search Settings  =================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Search Settings 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set incsearch            "Find the next match as we type the search
 set ignorecase smartcase "Ignore case, unless capitals are used
 set viminfo='100,f1      "Save up to 100 marks, enable capital marks
 
-" ================ Swap Files ==============
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Swap Files
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set backupdir=$HOME/.vim/backups
 set directory=$HOME/.vim/backups
 
-" ================ Persistent Undo ==================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Persistent Undo
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Keep undo history across sessions, by storing in file.
 " Only works all the time.
 
 set undodir=~/.vim/backups
 set undofile
 
-" ================ Indentation & Formatting ======================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Indentation & Formatting
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set autoindent
 set smartindent
@@ -69,13 +81,17 @@ set linebreak    "Wrap lines at convenient points
 
 set formatoptions-=cro
 
-" ================ Folds ============================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Folds
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set foldmethod=indent   "fold based on indent
 set foldnestmax=3       "deepest fold is 3 levels
 set nofoldenable        "dont fold by default
 
-" ================ Completion =======================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Completion
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set wildmode=list:longest
 set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
@@ -90,13 +106,17 @@ set wildignore+=log/**
 set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
 
-" ================ Scrolling ========================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Scrolling
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set scrolloff=8         "Start scrolling when we're 8 lines away from margins
 set sidescrolloff=15
 set sidescroll=1
 
-" ================ Statusline  ========================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Statusline
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set laststatus=2   " Always show the statusline
 set encoding=utf-8 " Necessary to show Unicode glyphs
@@ -111,124 +131,11 @@ set statusline+=%c,     "cursor column
 set statusline+=%l/%L   "cursor line/total lines
 set statusline+=\ %P    "percent through file
 
-
-" ================ Mappings ========================
-
-" Set <leader> to comma
-let mapleader = ","
-
-" Remap , because it's still useful
-noremap \ ,
-
-" edit in current directory
-nmap <leader>e :e %%
-
-" switch to last-used file
-nmap <leader><leader> <C-^>
-
-" easily set filetype
-nnoremap <leader>f :set filetype=
-
-" quick :CSScomb
-noremap <leader>c :CSScomb<CR>
-
-" When going to marks, go to character instead of line
-nmap ' `
-
-" %% becomes current directory in command mode
-cnoremap %% <C-R>=expand('%:h').'/'<cr>
-
-" Edit .vimrc easily
-nmap <leader>ve :tabedit $MYVIMRC<CR>
-
-" Source .vimrc easily
-nmap <leader>vs :source $MYVIMRC<CR>
-
-" ALPHABETIZATION!
-nmap <leader>s vii:!sort<CR>
-vmap <leader>s :!sort<CR>
-
-" Move around splits with <c-hjkl>
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
-
-" Easier first/last characters on current line
-"unmap L
-"unmap H
-"nnoremap H ^
-"nnoremap L $
-
-" toggle hlsearch and report status with <F4>
-noremap <F4> :set hlsearch! hlsearch?<CR>
-
-" browse buffer list easily
-nnoremap ]b :bnext<CR>
-nnoremap [b :bprev<CR>
-nnoremap ]B :blast<CR>
-nnoremap [B :bfirst<CR>
-
-" browse argument list easily
-nnoremap ]a :next<CR>
-nnoremap [a :prev<CR>
-nnoremap ]A :last<CR>
-nnoremap [A :first<CR>
-
-" browse location list easily
-nnoremap ]l :lnext<CR>
-nnoremap [l :lprev<CR>
-nnoremap ]L :llast<CR>
-nnoremap [L :lfirst<CR>
-
-" browse quickfix list easily
-nnoremap ]c :cnext<CR>
-nnoremap [c :cprev<CR>
-nnoremap ]C :clast<CR>
-nnoremap [C :cfirst<CR>
-
-" auto-indent pastes
-nnoremap p p=`]
-
-" Y acts like it should
-nnoremap Y y$
-
-" ================ Command-T Folders ========================
-
-nmap <leader>gs :CommandT ./app/assets/stylesheets<CR>
-nmap <leader>gs :CommandT ./app/views/layouts<CR>
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Rename file
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! RenameFile()
-    let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'), 'file')
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        exec ':silent !rm ' . old_name
-        redraw!
-    endif
-endfunction
-map <leader>n :call RenameFile()<cr>
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Custom Motions / Text Objects
+" Functions
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" CSS Value
-onoremap <silent>V :<C-U>normal! ^f:lvt;<CR>
-
-" CSS Attribute
-onoremap <silent>A :<C-U>normal! ^vt:<CR>
-
-" indent object
-onoremap <silent>ai :<C-U>cal <SID>IndTxtObj(0)<CR>
-onoremap <silent>ii :<C-U>cal <SID>IndTxtObj(1)<CR>
-vnoremap <silent>ai :<C-U>cal <SID>IndTxtObj(0)<CR><Esc>gv
-vnoremap <silent>ii :<C-U>cal <SID>IndTxtObj(1)<CR><Esc>gv
-
+" Indent text object
 function! s:IndTxtObj(inner)
   let curline = line(".")
   let lastline = line("$")
@@ -254,3 +161,117 @@ function! s:IndTxtObj(inner)
     normal! $
   endif
 endfunction
+
+" Rename file
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+map <leader>n :call RenameFile()<cr>
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Command-T Folders
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+nmap <leader>gs :CommandT ./app/assets/stylesheets<CR>
+nmap <leader>gl :CommandT ./app/views/layouts<CR>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Custom Motions / Text Objects
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" CSS Value
+onoremap <silent>V :<C-U>normal! ^f:lvt;<CR>
+
+" CSS Attribute
+onoremap <silent>A :<C-U>normal! ^vt:<CR>
+
+" indent object
+onoremap <silent>ai :<C-U>cal <SID>IndTxtObj(0)<CR>
+onoremap <silent>ii :<C-U>cal <SID>IndTxtObj(1)<CR>
+vnoremap <silent>ai :<C-U>cal <SID>IndTxtObj(0)<CR><Esc>gv
+vnoremap <silent>ii :<C-U>cal <SID>IndTxtObj(1)<CR><Esc>gv
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Mappings
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Set <leader> to comma
+let mapleader = ","
+
+" Remap "," because it's still useful
+noremap \ ,
+
+" switch to last-used file
+nmap <leader><leader> <C-^>
+
+" easily set filetype
+nnoremap <leader>f :set filetype=
+
+" Edit .vimrc easily
+nmap <leader>ve :tabedit $MYVIMRC<CR>
+
+" Source .vimrc easily
+nmap <leader>vs :source $MYVIMRC<CR>
+
+" Alphabetize stuff
+nmap <leader>s vii:!sort<CR>
+xmap <leader>s :!sort<CR>
+
+" Move around splits with <c-hjkl>
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+" toggle search highlighting and report status with <F4>
+noremap <F4> :set hlsearch! hlsearch?<CR>
+
+" auto-indent pastes
+nnoremap p p=`]
+
+" Y acts like it should
+nnoremap Y y$
+
+" === Lists ===
+
+" browse argument list easily
+nnoremap ]a :next<CR>
+nnoremap [a :prev<CR>
+nnoremap ]A :last<CR>
+nnoremap [A :first<CR>
+
+" browse buffer list easily
+nnoremap ]b :bnext<CR>
+nnoremap [b :bprev<CR>
+nnoremap ]B :blast<CR>
+nnoremap [B :bfirst<CR>
+
+" browse quickfix list easily
+nnoremap ]c :cnext<CR>
+nnoremap [c :cprev<CR>
+nnoremap ]C :clast<CR>
+nnoremap [C :cfirst<CR>
+
+" browse location list easily
+nnoremap ]l :lnext<CR>
+nnoremap [l :lprev<CR>
+nnoremap ]L :llast<CR>
+nnoremap [L :lfirst<CR>
+
+" === Temporary ===
+
+" Load generated CSS to clipboard
+nnoremap <leader>c :let @+ = join(readfile("stylesheets/base.css"), "\n")<CR>
+
+" Search scss files with F3
+" Yes, there's a better way to deal with all of these <left>s.
+" I haven't taken the time to figure out how
+nnoremap <F3> :vimgrep // **/*.scss<left><left><left><left><left><left><left><left><left><left><left>

@@ -81,6 +81,10 @@ set linebreak    "Wrap lines at convenient points
 
 set formatoptions-=cro
 
+" Set weird filetypes
+au! BufNewFile,BufRead *.cshtml set filetype=html
+
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Folds
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""

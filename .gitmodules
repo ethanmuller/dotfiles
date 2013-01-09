@@ -18,3 +18,4 @@
 [submodule "vim/bundle/matchit"]
 	path = vim/bundle/matchit
 	url = git://github.com/tsaleh/vim-matchit.git
+  ignore = dirty

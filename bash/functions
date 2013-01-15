@@ -26,6 +26,6 @@ function proml {
     local        BLUE="\[\033[0;34m\]"
     local     DEFAULT="\[\033[0m\]"
 
-      PS1="\u: \w $BLUE\$(parse_git_branch) $DEFAULT \n\[\e[33m\]➤ \[\e[0m\]"
+      PS1="\u: \w $BLUE\$(parse_git_branch) $DEFAULT \n\[\e[33m\]♪\[\e[0m\]"
 }
 proml

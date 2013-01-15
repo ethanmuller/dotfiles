@@ -270,6 +270,12 @@ nnoremap [l :lprev<CR>
 nnoremap ]L :llast<CR>
 nnoremap [L :lfirst<CR>
 
+" easy dashrocket
+imap <C-f> ->
+
+" easy hashrocket
+imap <C-h> =>
+
 " === Temporary ===
 
 " Load generated CSS to clipboard

@@ -28,3 +28,6 @@
 [submodule "vim/bundle/nerdcommenter"]
 	path = vim/bundle/nerdcommenter
 	url = git://github.com/scrooloose/nerdcommenter.git
+[submodule "vim/bundle/html5-syntax"]
+	path = vim/bundle/html5-syntax
+	url = git://github.com/othree/html5-syntax.vim.git

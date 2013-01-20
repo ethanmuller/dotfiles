@@ -277,12 +277,9 @@ imap <C-f> ->
 " easy hashrocket
 imap <C-h> =>
 
+source ~/.vim/plugin_config.vim
+
 " === Temporary ===
 
 " Load generated CSS to clipboard
 nnoremap <leader>c :let @+ = join(readfile("stylesheets/base.css"), "\n")<CR>
-
-" Search scss files with F3
-" Yes, there's a better way to deal with all of these <left>s.
-" I haven't taken the time to figure out how
-nnoremap <F3> :vimgrep // **/*.scss<left><left><left><left><left><left><left><left><left><left><left>

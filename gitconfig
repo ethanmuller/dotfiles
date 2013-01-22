@@ -1,0 +1,12 @@
+[user]
+	name = ethanmuller
+	email = ethanbmuller@gmail.com
+[core]
+	editor = vim
+	excludesfile = /Users/ethanmuller/.gitignore_global
+[credential]
+	helper = osxkeychain
+[color]
+	ui = true
+[format]
+	pretty = %Cgreen%h%Creset %C(cyan)%an%Creset - %s %C(yellow)- %ar

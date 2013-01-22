@@ -21,11 +21,22 @@ function migrate {
 function parse_git_branch {
     git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \[\1\]/'
 }
-function proml {
 
-    local        BLUE="\[\033[0;34m\]"
-    local     DEFAULT="\[\033[0m\]"
+function pretty_prompt {
 
-      PS1="\u: \w $BLUE\$(parse_git_branch) $DEFAULT \n\[\e[33m\]♪\[\e[0m\]"
+  local    DEFAULT="\[\033[0m\]"
+  local    BLUE="\[\033[0;34m\]"
+  local	   CYAN="\e[36m"
+  local	   RED="\e[31m"
+  local	   BLACK="\e[30m"
+  local    GREEN="\e[32m"
+  local    YELLOW="\e[33m"
+  local    BLUE="\e[34m"
+  local    MAGENTA="\e[35m"
+  local    WHITE="\e[37m"
+  local    NOTE="♪"
+
+PS1="$CYAN\u: $WHITE\w $BLUE\$(parse_git_branch) \n$YELLOW$NOTE $DEFAULT"
+
 }
-proml
+pretty_prompt

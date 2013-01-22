@@ -1,6 +1,18 @@
 [user]
 	name = ethanmuller
 	email = ethanbmuller@gmail.com
+[alias]
+        ps = push
+        pl = pull
+        s = status -sb
+        l = log --graph
+        a = add
+        b = branch
+        c = commit
+        d = diff
+        sh = show
+        k = checkout
+        ls = ls-files
 [core]
 	editor = vim
 	excludesfile = /Users/ethanmuller/.gitignore_global

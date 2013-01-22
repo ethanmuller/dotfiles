@@ -1,6 +1,6 @@
 # bash
 . ~/dotfiles/bash/aliases
-. ~/dotfiles/bash/env
+. ~/dotfiles/bash/path
 . ~/dotfiles/bash/functions
 
 # grc

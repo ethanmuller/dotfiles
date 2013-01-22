@@ -9,7 +9,7 @@ alias mopen='open http://localhost:8888'
 #[GIT]
 alias git=/usr/local/git/bin/git
 alias g='cat ~/.gitconfig'
-alias gpu='git push'
+alias gps='git push'
 alias gpl='git pull'
 alias gs='git status -sb'
 alias ga='git add'

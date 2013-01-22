@@ -1,7 +1,7 @@
 # bash
-. ~/dotfiles/bash/aliases
-. ~/dotfiles/bash/path
-. ~/dotfiles/bash/functions
+. ~/dotfiles/bash/aliases.sh
+. ~/dotfiles/bash/path.sh
+. ~/dotfiles/bash/functions.sh
 
 # grc
 . "`brew --prefix`/etc/grc.bashrc"

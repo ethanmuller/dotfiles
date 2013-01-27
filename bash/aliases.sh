@@ -1,6 +1,7 @@
 #[MISC]
 alias c=clear
 alias h=history
+alias g='grunt'
 alias r='source ~/.bashrc && clear'
 alias refresh='source ~/.bashrc && clear'
 alias l='ls -Gl'

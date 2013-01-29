@@ -11,7 +11,6 @@ alias psd='open -a /Applications/Adobe\ Photoshop\ CS6/Adobe\ Photoshop\ CS6.app
 
 #[GIT]
 alias git=/usr/local/git/bin/git
-alias g='cat ~/.gitconfig'
 alias gps='git push'
 alias gpl='git pull'
 alias gs='git status -sb'
@@ -39,4 +38,5 @@ alias jopen='open http://localhost:3000/jasmine'
 
 #[VIM]
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim
-alias v=/Applications/MacVim.app/Contents/MacOS/Vim
+alias vi=vim
+alias v=vim

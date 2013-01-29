@@ -22,6 +22,7 @@ alias gd='git diff'
 alias gsh='git show'
 alias gk='git checkout'
 alias gls='git ls-files'
+alias gi='git ignored'
 #alias gl='git log --format="%Cgreen%h%Creset %C(cyan)%an%Creset - %s %C(yellow)- %ar" --graph'
 
 #[RoR]

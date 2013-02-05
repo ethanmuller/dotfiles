@@ -9,6 +9,9 @@ alias gh='cd ~/github'
 alias aopen='open http://localhost:8888'
 alias psd='open -a /Applications/Adobe\ Photoshop\ CS6/Adobe\ Photoshop\ CS6.app'
 
+#[TEMP]
+alias getbase='cat ~/github/geico/stylesheets/base.css | pbcopy'
+
 #[GIT]
 alias git=/usr/local/git/bin/git
 alias gps='git push'

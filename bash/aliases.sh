@@ -27,6 +27,9 @@ alias gk='git checkout'
 alias gls='git ls-files'
 alias gi='git ignored'
 #alias gl='git log --format="%Cgreen%h%Creset %C(cyan)%an%Creset - %s %C(yellow)- %ar" --graph'
+alias gtu='git-tf-pull'
+alias gtp='git-tf-push'
+
 
 #[RoR]
 alias ror='cd ~/dev/_rails'

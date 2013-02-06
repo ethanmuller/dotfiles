@@ -2,8 +2,8 @@
 	name = ethanmuller
 	email = ethanbmuller@gmail.com
 [alias]
-        ps = push
-        pl = pull
+        p = push
+        u = pull
         s = status -sb
         l = log --graph
         a = add

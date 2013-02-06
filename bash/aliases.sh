@@ -14,8 +14,8 @@ alias getbase='cat ~/github/geico/stylesheets/base.css | pbcopy'
 
 #[GIT]
 alias git=/usr/local/git/bin/git
-alias gps='git push'
-alias gpl='git pull'
+alias gp='git push'
+alias gu='git pull'
 alias gs='git status -sb'
 alias gl='git log --graph'
 alias ga='git add'

@@ -1,0 +1,9 @@
+--ignore-case
+--type-set=haml=.haml
+--type-set=sass=.scss,.sass
+--type-set=coffee=.coffee
+--type-set=eco=.eco
+--type-set=hbs=.hbs,.handlebars
+--type-set=jbuilder=.jbuilder
+--type-set=stylus=.styl
+--type-set=markdown=.md,.markdown

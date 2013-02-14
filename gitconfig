@@ -23,3 +23,5 @@
 	ui = true
 [format]
 	pretty = %Cgreen%h%Creset %C(cyan)%an%Creset - %s %C(yellow)- %ar
+[github]
+	user = ethanmuller

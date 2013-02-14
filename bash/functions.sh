@@ -1,25 +1,31 @@
 stty -ixon -ixoff # fix for <C-s> in terminal Vim
 
+function ip {
+  IP=$(ifconfig | grep 'inet 1' | cut -c 6- | awk 'NR==2 {print $1}')
+  echo -e $IP
+  echo $IP | pbcopy
+}
+
 function take {
-    mkdir $1
-      cd $1
+  mkdir $1
+  cd $1
 }
 function hg {
   history | grep --color=auto $1
 }
 function tell {
-    cd $1
-      ls -l
+  cd $1
+  ls -l
 }
 function rvm_install {
-    rvm install $1 --with-gcc=clang
+  rvm install $1 --with-gcc=clang
 }
 function migrate {
-    rake db:migrate
-      rake db:test:prepare
+  rake db:migrate
+  rake db:test:prepare
 }
 function parse_git_branch {
-    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \[\1\]/'
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \[\1\]/'
 }
 function esc {
   local START='\['
@@ -80,16 +86,16 @@ function pretty_prompt {
   local    WHITE="\e[37m"
   local    CHAR="\xE2\x98\xA0"
 
-PS1="$(esc $CYAN)"
-PS1+="\u " # print user
-PS1+="$(esc $WHITE)"
-PS1+="\w " # print working directory
-PS1+="$(esc $BLUE)"
-PS1+="\$(parse_git_branch)" # print current git branch
-PS1+="\n" # print newline
-PS1+="$(esc $YELLOW)"
-PS1+="➜ " # cutesy prompt character
-PS1+="$(esc $DEFAULT)"
+  PS1="$(esc $CYAN)"
+  PS1+="\u " # print user
+  PS1+="$(esc $WHITE)"
+  PS1+="\w " # print working directory
+  PS1+="$(esc $BLUE)"
+  PS1+="\$(parse_git_branch)" # print current git branch
+  PS1+="\n" # print newline
+  PS1+="$(esc $YELLOW)"
+  PS1+="➜ " # cutesy prompt character
+  PS1+="$(esc $DEFAULT)"
 
 }
 pretty_prompt

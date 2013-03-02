@@ -99,3 +99,11 @@ function pretty_prompt {
 
 }
 pretty_prompt
+
+function set_profile {
+  echo -e "\033]50;SetProfile=$1\a"
+}
+
+function get_desktop_width {
+  osascript -e 'tell application "Finder" to get bounds of window of desktop' | awk '/./ { print $3-1 }'
+}

@@ -1,7 +1,6 @@
 #[MISC]
 alias c=clear
 alias h=history
-alias g='grunt'
 alias r='source ~/.bashrc && clear'
 alias refresh='source ~/.bashrc && clear'
 alias l='ls -Gl'
@@ -31,6 +30,9 @@ alias gi='git ignored'
 alias gtu='git-tf-pull'
 alias gtp='git-tf-push'
 
+#[GRUNT]
+alias g='grunt'
+alias gstart='grunt && grunt watch'
 
 #[RoR]
 alias ror='cd ~/dev/_rails'

@@ -105,5 +105,9 @@ function set_profile {
 }
 
 function get_desktop_width {
-  osascript -e 'tell application "Finder" to get bounds of window of desktop' | awk '/./ { print $3-1 }'
+  osascript -e 'tell application "Finder" to get bounds of window of desktop'
 }
+
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi

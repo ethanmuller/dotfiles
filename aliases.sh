@@ -6,7 +6,6 @@ alias c=clear
 alias h=history
 alias r='source ~/.bashrc && clear'
 alias refresh='source ~/.bashrc && clear'
-alias l='ls -Gl'
 alias gh='cd ~/github'
 alias aopen='open http://localhost:8888'
 alias psd='open -a /Applications/Adobe\ Photoshop\ CS6/Adobe\ Photoshop\ CS6.app'

@@ -2,6 +2,7 @@
 # for both zsh and bash
 
 #[MISC]
+alias o=open
 alias c=clear
 alias h=history
 alias psd='open -a /Applications/Adobe\ Photoshop\ CS6/Adobe\ Photoshop\ CS6.app'

@@ -12,9 +12,13 @@ COMPLETION_WAITING_DOTS="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(git)
 
-# Sourced files
+# Source oh-my-zsh
 . $ZSH/oh-my-zsh.sh
+
+# Sourced files
 . ~/dotfiles/path.sh
 . ~/dotfiles/aliases.sh
 . ~/.rvm/scripts/rvm
 . "`brew --prefix`/etc/grc.bashrc"
+
+cdpath=( ~ ~/github )

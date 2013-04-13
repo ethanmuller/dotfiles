@@ -1,3 +1,6 @@
+# Here are some handy-dandy aliases
+# for both zsh and bash
+
 #[MISC]
 alias c=clear
 alias h=history
@@ -45,6 +48,6 @@ alias ropen='open http://localhost:3000'
 alias jopen='open http://localhost:3000/jasmine'
 
 #[VIM]
-alias vim=/Applications/MacVim.app/Contents/MacOS/Vim
+alias vim=/Applications/MacVim.app/Contents/MacOS/Vim # use the MacVim binary
 alias vi=vim
 alias v=vim

@@ -1,5 +1,5 @@
 # bash
-. ~/dotfiles/bash/aliases.sh
+. ~/dotfiles/aliases.sh
 . ~/dotfiles/bash/path.sh
 . ~/dotfiles/bash/functions.sh
 . ~/dotfiles/bash/settings.sh

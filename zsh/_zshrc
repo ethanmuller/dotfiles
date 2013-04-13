@@ -1,0 +1,29 @@
+# Path to your oh-my-zsh configuration.
+ZSH=$HOME/.oh-my-zsh
+
+# Set name of the theme to load.
+# Look in ~/.oh-my-zsh/themes/
+ZSH_THEME="ethanmuller"
+
+# Uncomment following line if you want red dots to be displayed while waiting for completion
+COMPLETION_WAITING_DOTS="true"
+
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+plugins=(git)
+
+. $ZSH/oh-my-zsh.sh
+
+#rvm
+. ~/.rvm/scripts/rvm
+
+# Customize to your needs...
+export PATH=/Users/ethanmuller/.rvm/gems/ruby-1.9.3-p194/bin:/Users/ethanmuller/.rvm/gems/ruby-1.9.3-p194@global/bin:/Users/ethanmuller/.rvm/rubies/ruby-1.9.3-p194/bin:/Users/ethanmuller/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/Users/ethanmuller/bin:/Users/ethanmuller/dotfiles/scripts:/Users/ethanmuller/bin/git-tf
+
+. ~/dotfiles/aliases.sh
+
+# grc
+. "`brew --prefix`/etc/grc.bashrc"
+
+#rvm
+. ~/.rvm/scripts/rvm

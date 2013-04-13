@@ -1,6 +1,0 @@
-#!/bin/sh
-
-for fn in *.$1{
-	mv $fn 'basename $fn $1'$2
-}
-done

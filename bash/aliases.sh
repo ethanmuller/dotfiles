@@ -9,9 +9,6 @@ alias aopen='open http://localhost:8888'
 alias psd='open -a /Applications/Adobe\ Photoshop\ CS6/Adobe\ Photoshop\ CS6.app'
 alias tr="trash"
 
-#[TEMP]
-alias cb='cat stylesheets/base.css | pbcopy'
-
 #[GIT]
 alias git=/usr/local/git/bin/git
 alias gp='git push'
@@ -33,6 +30,7 @@ alias gtp='git-tf-push'
 #[GRUNT]
 alias g='grunt'
 alias gstart='grunt && grunt watch'
+alias gst='gstart'
 
 #[RoR]
 alias ror='cd ~/dev/_rails'

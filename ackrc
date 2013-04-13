@@ -2,6 +2,7 @@
 
 --ignore-dir=node_modules
 
+--type-set=erb=.erb
 --type-set=haml=.haml
 --type-set=sass=.scss,.sass
 --type-set=coffee=.coffee

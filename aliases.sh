@@ -7,6 +7,7 @@ alias c=clear
 alias h=history
 alias psd='open -a /Applications/Adobe\ Photoshop\ CS6/Adobe\ Photoshop\ CS6.app'
 alias tr="trash"
+alias l="ls -l"
 
 #[GIT]
 alias git=/usr/local/git/bin/git

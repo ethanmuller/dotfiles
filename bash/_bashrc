@@ -1,11 +1,11 @@
-# bash
-. ~/dotfiles/aliases.sh
-. ~/dotfiles/path.sh
-. ~/dotfiles/bash/functions.sh
-. ~/dotfiles/bash/settings.sh
-
-# grc
-. "`brew --prefix`/etc/grc.bashrc"
-
-#rvm
-. ~/.rvm/scripts/rvm
+# # bash
+# . ~/dotfiles/aliases.sh
+# . ~/dotfiles/path.sh
+# . ~/dotfiles/bash/functions.sh
+# . ~/dotfiles/bash/settings.sh
+# 
+# # grc
+# . "`brew --prefix`/etc/grc.bashrc"
+# 
+# #rvm
+# . ~/.rvm/scripts/rvm

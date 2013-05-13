@@ -21,4 +21,8 @@ plugins=(git)
 . ~/.rvm/scripts/rvm
 . "`brew --prefix`/etc/grc.bashrc"
 
+# Allow ctrl-S in vim
+stty stop undef
+stty start undef
+
 cdpath=( ~ ~/github )

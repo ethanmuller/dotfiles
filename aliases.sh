@@ -23,6 +23,7 @@ alias gsh='git show'
 alias gk='git checkout'
 alias gls='git ls-files'
 alias gi='git ignored'
+alias gf='git fetch'
 
 #[GRUNT]
 alias g='grunt'
@@ -31,5 +32,4 @@ alias gst='gstart'
 
 #[VIM]
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim # use the MacVim binary
-alias vi=vim
-alias v=vim
+alias v="vim --remote-silent"

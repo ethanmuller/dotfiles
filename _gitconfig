@@ -25,3 +25,5 @@
 	pretty = %Cgreen%h%Creset %C(cyan)%an%Creset - %s %C(yellow)- %ar
 [github]
 	user = ethanmuller
+[commit]
+	template = /Users/ethanmuller/dotfiles/git-commit-template.txt

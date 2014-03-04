@@ -18,6 +18,7 @@ plugins=(git)
 # Sourced files
 . ~/dotfiles/path.sh
 . ~/dotfiles/aliases.sh
+. ~/dotfiles/functions.sh
 . ~/.rvm/scripts/rvm
 . "`brew --prefix`/etc/grc.bashrc"
 

@@ -1,13 +1,6 @@
---ignore-case
-
 --ignore-dir=node_modules
 
---type-set=erb=.erb
---type-set=haml=.haml
---type-set=sass=.scss,.sass
---type-set=coffee=.coffee
---type-set=eco=.eco
---type-set=hbs=.hbs,.handlebars
---type-set=jbuilder=.jbuilder
---type-set=stylus=.styl
---type-set=markdown=.md,.markdown
+--type-add
+html=.haml,.hbs
+--type-add
+css=.sass,.scss

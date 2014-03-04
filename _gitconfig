@@ -27,3 +27,6 @@
 	user = ethanmuller
 [commit]
 	template = /Users/ethanmuller/dotfiles/git-commit-template.txt
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f

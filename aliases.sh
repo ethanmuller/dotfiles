@@ -1,13 +1,23 @@
 # Here are some handy-dandy aliases
 # for both zsh and bash
 
+#[CONFIG]
+alias ev='vim ~/.vimrc'
+alias ez='vim ~/.zshrc'
+alias ea='vim ~/dotfiles/aliases.sh'
+
 #[MISC]
 alias c=clear
 alias h=history
-alias psd='open -a /Applications/Adobe\ Photoshop\ CS6/Adobe\ Photoshop\ CS6.app'
-alias tr="trash"
-alias l="ls -l"
-alias gsp="grep -F"
+alias tr='trash'
+alias l='ls -l'
+alias gsp='grep -F'
+
+#[TMUX]
+alias t=tmux
+alias ta='tmux attach -t'
+alias tl='tmux ls'
+alias tn='tmux new -s'
 
 #[GIT]
 alias git=/usr/local/git/bin/git
@@ -24,12 +34,10 @@ alias gk='git checkout'
 alias gls='git ls-files'
 alias gi='git ignored'
 alias gf='git fetch'
-alias gbc='git branch --merged | grep -v master | xargs git branch -d'
 
 #[GRUNT]
 alias g='grunt'
-alias gstart='grunt && grunt watch'
-alias gst='gstart'
+alias gcs='grunt && grunt server' # compile & watch
 
 #[VIM]
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim # use the MacVim binary

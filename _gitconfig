@@ -1,32 +1,40 @@
 [user]
-	name = ethanmuller
-	email = ethanbmuller@gmail.com
+  name = ethanmuller
+  email = ethanbmuller@gmail.com
 [alias]
-        p = push
-        u = pull
-        s = status -sb
-        l = log --graph
-        a = add
-        b = branch
-        c = commit
-        d = diff
-        sh = show
-        k = checkout
-        ls = ls-files
-        ignored = clean -ndX
+  p = push
+  u = pull
+  s = status -sb
+  l = log --graph
+  a = add
+  b = branch
+  c = commit
+  d = diff
+  sh = show
+  k = checkout
+  ls = ls-files
+  ignored = clean -ndX
+  pb = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
+  pr = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/pull/new/$(git rev-parse --abbrev-ref HEAD)\""
+  gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
+  cleanup = "!git remote prune origin && git branch --merged | grep -v \\* | xargs git branch -D"
+
+[push]
+  default = current
+
 [core]
-	editor = vim
-	excludesfile = /Users/ethanmuller/.gitignore_global
+  editor = vim
+  excludesfile = /Users/ethanmuller/.gitignore_global
 [credential]
-	helper = osxkeychain
+  helper = osxkeychain
 [color]
-	ui = true
+  ui = true
 [format]
-	pretty = %Cgreen%h%Creset %C(cyan)%an%Creset - %s %C(yellow)- %ar
+  pretty = %Cgreen%h%Creset %C(cyan)%an%Creset - %s %C(yellow)- %ar
 [github]
-	user = ethanmuller
+  user = ethanmuller
 [commit]
-	template = /Users/ethanmuller/dotfiles/git-commit-template.txt
+  template = /Users/ethanmuller/dotfiles/git-commit-template.txt
 [filter "media"]
-	clean = git-media-clean %f
-	smudge = git-media-smudge %f
+  clean = git-media-clean %f
+  smudge = git-media-smudge %f

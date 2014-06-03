@@ -15,12 +15,9 @@ alias gsp='grep -F'
 
 #[TMUX]
 alias t=tmux
-alias ta='tmux attach -t'
-alias tl='tmux ls'
-alias tn='tmux new -s'
 
 #[GIT]
-alias git=/usr/local/git/bin/git
+alias git=/usr/local/bin/git
 alias gp='git push'
 alias gu='git up'
 alias gs='git status -sb'
@@ -41,3 +38,6 @@ alias gcs='grunt && grunt server' # compile & watch
 
 #[VIM]
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim # use the MacVim binary
+
+#[TEMP]
+alias qa='python -mwebbrowser http://ncsbn.sparkboxqa.com'

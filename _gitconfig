@@ -14,10 +14,10 @@
   k = checkout
   ls = ls-files
   ignored = clean -ndX
-  pb = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
   pr = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/pull/new/$(git rev-parse --abbrev-ref HEAD)\""
   gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
   cleanup = "!git remote prune origin && git branch --merged | grep -v \\* | xargs git branch -D"
+
 
 [push]
   default = current
@@ -36,5 +36,5 @@
 [commit]
   template = /Users/ethanmuller/dotfiles/git-commit-template.txt
 [filter "media"]
-  clean = git-media-clean %f
-  smudge = git-media-smudge %f
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f

@@ -5,3 +5,7 @@ function wreck() {
     cd $WRECKDIR
   }
 }
+
+function zipsize {
+  gzip -c $1 | wc -c
+}

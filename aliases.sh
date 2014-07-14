@@ -38,6 +38,4 @@ alias gcs='grunt && grunt server' # compile & watch
 
 #[VIM]
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim # use the MacVim binary
-
-#[TEMP]
-alias qa='python -mwebbrowser http://ncsbn.sparkboxqa.com'
+alias v=vim

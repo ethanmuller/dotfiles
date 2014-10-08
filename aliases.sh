@@ -12,6 +12,7 @@ alias h=history
 alias tr='trash'
 alias l='ls -l'
 alias gsp='grep -F'
+alias m='open -a Marked'
 
 #[TMUX]
 alias t=tmux
@@ -31,10 +32,14 @@ alias gk='git checkout'
 alias gls='git ls-files'
 alias gi='git ignored'
 alias gf='git fetch'
+alias gclean="git remote prune origin && git branch --merged | grep -v \* | xargs git branch -D"
 
-#[GRUNT]
-alias g='grunt'
-alias gcs='grunt && grunt server' # compile & watch
+##[GRUNT]
+#alias g='grunt'
+#alias gcs='grunt && grunt server' # compile & watch
+
+#[GULP]
+alias g='gulp --fatal=off'
 
 #[VIM]
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim # use the MacVim binary

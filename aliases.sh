@@ -10,7 +10,7 @@ alias ea='vim ~/dotfiles/aliases.sh'
 alias c=clear
 alias h=history
 alias tr='trash'
-alias l='ls -l'
+alias l='ls -lG'
 alias gsp='grep -F'
 alias m='open -a Marked'
 
@@ -20,7 +20,7 @@ alias t=tmux
 #[GIT]
 alias git=/usr/local/bin/git
 alias gp='git push'
-alias gu='git up'
+alias gu='git pull'
 alias gs='git status -sb'
 alias gl='git log --graph'
 alias ga='git add'
@@ -42,5 +42,4 @@ alias gclean="git remote prune origin && git branch --merged | grep -v \* | xarg
 alias g='gulp --fatal=off'
 
 #[VIM]
-alias vim=/Applications/MacVim.app/Contents/MacOS/Vim # use the MacVim binary
 alias v=vim

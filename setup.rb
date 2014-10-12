@@ -19,6 +19,7 @@ files = [
   '_ackrc',
   '_bash_profile',
   '_gitconfig',
+  '_gitignore_global',
   '_tmux.conf',
 ]
 

@@ -18,6 +18,7 @@ include FileUtils
 files = [
   '_ackrc',
   '_bash_profile',
+  '_zshrc',
   '_gitconfig',
   '_gitignore_global',
   '_tmux.conf',

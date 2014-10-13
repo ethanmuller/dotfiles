@@ -1,0 +1,7 @@
+. ~/github/dotfiles/shell/generic.sh
+
+# Custom prompt
+export PS1=$'%1~ \e[0;33m➜  \e[0m'
+
+# Enable cd-ing into these paths
+cdpath=(~ ~/github)

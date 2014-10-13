@@ -1,12 +1,9 @@
-# Here are some handy-dandy aliases
-# for both zsh and bash
-
-#[CONFIG]
+# --- CONFIG ---
 alias ev='vim ~/.vimrc'
 alias ez='vim ~/.zshrc'
 alias ea='vim ~/dotfiles/aliases.sh'
 
-#[MISC]
+# --- MISC ---
 alias c=clear
 alias h=history
 alias tr='trash'
@@ -14,10 +11,10 @@ alias l='ls -lG'
 alias gsp='grep -F'
 alias m='open -a Marked'
 
-#[TMUX]
+# --- TMUX ---
 alias t=tmux
 
-#[GIT]
+# --- GIT ---
 alias git=/usr/local/bin/git
 alias gp='git push'
 alias gu='git pull'
@@ -34,12 +31,12 @@ alias gi='git ignored'
 alias gf='git fetch'
 alias gclean="git remote prune origin && git branch --merged | grep -v \* | xargs git branch -D"
 
-##[GRUNT]
+## --- GRUNT ---
 #alias g='grunt'
 #alias gcs='grunt && grunt server' # compile & watch
 
-#[GULP]
+# --- GULP ---
 alias g='gulp --fatal=off'
 
-#[VIM]
+# --- VIM ---
 alias v=vim

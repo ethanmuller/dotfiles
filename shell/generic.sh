@@ -3,5 +3,7 @@
 . ~/github/dotfiles/shell/functions.sh
 . ~/github/dotfiles/shell/app-dependent.sh
 
+cdpath=( ~ ~/github )
+
 # Load RVM into a shell session *as a function*
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"

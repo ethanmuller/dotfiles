@@ -14,14 +14,12 @@ alias m='open -a Marked'
 # --- TMUX ---
 alias t=tmux
 
-# --- GIT ---
-
 ## --- GRUNT ---
 #alias g='grunt'
 #alias gcs='grunt && grunt server' # compile & watch
 
 # --- GULP ---
-alias g='gulp --fatal=off'
+alias glp='gulp --fatal=off'
 
 # --- VIM ---
 alias v=vim

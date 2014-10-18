@@ -1,6 +1,5 @@
 # Source files
 . ~/github/dotfiles/shell/aliases.sh
-. ~/github/dotfiles/shell/path.sh
 . ~/github/dotfiles/shell/functions.sh
 . ~/github/dotfiles/shell/app-dependent.sh
 

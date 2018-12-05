@@ -1,9 +1,13 @@
 # Source files
-. ~/github/dotfiles/shell/aliases.sh
-. ~/github/dotfiles/shell/functions.sh
-. ~/github/dotfiles/shell/app-dependent.sh
+. ~/github/dotfiles/shell/generic/aliases.sh
+. ~/github/dotfiles/shell/generic/functions.sh
+. ~/github/dotfiles/shell/generic/app-dependent.sh
 
-cdpath=( ~ ~/github )
+cdpath=( ~ ~/Library/Application\ Support/pico-8/)
 
-# Load RVM into a shell session *as a function*
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+# export PATH="$PATH:/users/ethanmuller/.bin"
+
+export EDITOR=nvim
+
+# Unblock <C-s> in tmux
+stty -ixon

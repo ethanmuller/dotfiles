@@ -1,8 +1,6 @@
 ;;;* My Emacs Config (hit TAB to expand)
 ;;;** Package system setup
-
 (require 'package)
-
 (add-to-list
  'package-archives
  '("org" . "http://orgmode.org/elpa/"))
@@ -113,7 +111,7 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
-;;;*** Evil
+;;;*** Functions
 (defun emu-dired-open-file-at-point ()
   "Open the file at point in the OS's default application"
   (interactive)
@@ -136,12 +134,27 @@
   (interactive)
   (switch-to-buffer (generate-new-buffer "*scratch*")))
 
-;;(run-quoted-use-package-statement)
+(defun emu-insert-date ()
+  "Insert current date into buffer."
+  (interactive)
+  (insert (shell-command-to-string "echo -n $(date +%m-%d-%y)")))
+
+(defun emu-insert-month-name ()
+  "Insert current month into buffer.
+Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
+  (interactive)
+  (insert (shell-command-to-string "echo -n $(date +%B)")))
+
+(defun emu-open-config-file ()
+  "Open the emacs config file."
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+;;;*** General
 (use-package general
   :config
   (general-evil-setup)
   (general-create-definer spc-leader-def
-    :states '(normal motion) 
+    :states '(normal visual insert motion emacs)
     :keymaps 'override
     :prefix "SPC"
     :non-normal-prefix "C-SPC")
@@ -152,32 +165,53 @@
 
    "g"   'magit-status
 
+   "i" '(:ignore t :which-key "insert ⚡")
+   "id" 'emu-insert-date
+   "im" 'emu-insert-month-name
+   "il" 'org-insert-link
+
+   "s" '(:ignore t :which-key "shell stuff 🐌")
+   "se" 'eshell
+   "sa" 'async-shell-command
+
    "f" '(:ignore t :which-key "files 🗄")
    "ff" 'counsel-find-file
-   "fs"  'save-buffer
-   "fw"  'write-file
-   "fr"  'counsel-recentf
+   "fs" 'save-buffer
+   "fw" 'write-file
+   "fr" 'counsel-recentf
+
+   "j" '(:ignore t :which-key "jump 🕴")
+   "je" 'emu-open-config-file
+   "jb" 'counsel-bookmark
+   "jh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/home.org"))) :which-key "home org")
+   "jw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/work.org"))) :which-key "work org")
+   "jo" 'counsel-org-goto
+    ;; (concat emu-dropbox-path "org/home.org")
 
    "e" '(:ignore t :which-key "edit ✏")
    "ec"   'emu-copy-file-name-to-clipboard
 
    "b" '(:ignore t :which-key "buffers 🖹")
    "bs" 'ivy-switch-buffer
+   "SPC" 'ivy-switch-buffer
    "bk" 'kill-buffer
    "bn" 'emu-new-buffer
+   "bb" 'evil-buffer
+   "be" 'emu-open-config-file
+   ;; "bb" 'counsel-bookmark
+   "bh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/home.org"))) :which-key "home org")
+   "bw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/work.org"))) :which-key "work org")
 
    "v" '(:ignore t :which-key "view 👁")
-   "vt"   'toggle-truncate-lines
-   "vl"   'emu-toggle-line-numbers-type
-   "vj"   'recenter
+   "vt" 'toggle-truncate-lines
+   "vl" 'emu-toggle-line-numbers-type
+   "vj" 'recenter
+   "vz" '((lambda () (interactive) (text-scale-adjust 0.5)) :which-key "adjust font size")
 
-   "h"   '(:ignore t :which-key "help ❓")
-   "hk"   'describe-key
-   "hm"   'describe-mode
-   "hf"   'describe-function
-   "hv"   'describe-variable
+   "h" 'help-command
+
    ))
-
+;;;*** Evil
 (use-package evil
   ;; Evil mode is what makes emacs worth using. <3
   ;; It emulates vim inside of emacs.
@@ -185,18 +219,29 @@
   (evil-mode 1)
   (spc-leader-def
     "w" '(:ignore t :which-key "windows 📖")
+    ;; ugh, I gotta figure out how to use SPC w to simulate "C-w"
+    ;; "w" '((lambda () (interactive) (general-simulate-key "C-w")) :which-key "windows 📖")
+    ;; "w" (general-simulate-key "C-w")
+    ;; "w" '(lambda () (interactive) (general-key "C-w") :which-key "windows 📖")
+    ;; "w" '(lambda () (interactive) (general-key "C-w") :which-key "windows 📖")
     "wh" 'evil-window-left
     "wj" 'evil-window-down
     "wk" 'evil-window-up
     "wl" 'evil-window-right
     "wc" 'evil-window-delete
     "wo" 'delete-other-windows
-    "ws" 'evil-window-split
-    "wv" 'evil-window-vsplit
-    "w=" 'balance-windows)
+    "ws" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
+    "wv" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
+    "C-w" nil
+    ;; "C-w s" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
+    ;; "C-w v" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
+    ;; "ws" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
+    ;; "wv" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
+    ;; "w=" 'balance-windows
+    )
 
   (general-define-key
-   :states '(motion operator)
+   :states '(motion)
    "j" 'evil-next-visual-line
    "k" 'evil-previous-visual-line)
 
@@ -214,7 +259,6 @@
    "S-<up>" 'evil-window-move-very-bottom
    "S-<right>" 'evil-window-move-far-right
 
-   "C-w" '(lambda () (interactive) (ding))
    "-" 'emu-open-dired-here
    "gx" 'browse-url-at-point
    ))
@@ -315,8 +359,10 @@
   :diminish ""
   :general (spc-leader-def
             "p" '(:ignore t :which-key "projects ✨")
-            "pp"   'projectile-switch-project
-            "pe"   'projectile-find-file)
+            "pp" 'projectile-switch-project
+            "pf" 'counsel-projectile-find-file
+            "pa" 'projectile-run-async-shell-command-in-root
+            "ps" 'counsel-projectile-ag)
 
   :config
   (projectile-global-mode)
@@ -386,6 +432,9 @@
 ;;                              ;; (sound-wav-play  "~/.emacs.d/sound/bell.wav")
 ;;                              )))
 
+;; (use-package dsvn)
+;; (use-package masvn)
+
 (use-package flycheck
   :pin melpa-stable
   :config
@@ -426,6 +475,7 @@
   (setq which-key-idle-secondary-delay 0.01)
   (setq which-key-separator "  ")
   (setq which-key-show-prefix 'echo)
+  (setq which-key-max-description-length 50)
   (setq which-key-prefix-prefix "")
   (setq which-key-add-column-padding 3)
   (setq which-key-sort-order 'which-key-prefix-then-key-order))
@@ -438,14 +488,13 @@
  :config
   (global-hl-line-mode))
 
-;; (use-package default-text-scale
-;;   ;; DISABLED BECAUSE IT'S WRECKING MY CUSTOM FACES
+(use-package default-text-scale
 
-;;   ;; this lets us change text sizes in all of emacs. emacs' built-in
-;;   ;; text-scale-* functions only operate on the current buffer.
-;;   :config
-;;   (define-key global-map (kbd "s-=") 'default-text-scale-increase)
-;;   (define-key global-map (kbd "s--") 'default-text-scale-decrease))
+  ;; this lets us change text sizes in all of emacs. emacs' built-in
+  ;; text-scale-* functions only operate on the current buffer.
+  :config
+  (define-key global-map (kbd "s-=") 'default-text-scale-increase)
+  (define-key global-map (kbd "s--") 'default-text-scale-decrease))
 
 (use-package rainbow-delimiters
   :config
@@ -510,7 +559,7 @@ http://flatuicolors.com/palette/defo
   (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
 
   ;; Change fringe size
-  (set-fringe-mode '(10 . 0))
+  (set-fringe-mode '(10 . 10))
 
   (setq-default line-spacing 0)
 
@@ -619,45 +668,41 @@ http://flatuicolors.com/palette/defo
 ;; (ding)
 
 ;; a little encouragement while starting up emacs
-(setq initial-scratch-message ";;                                        |
-;;          \\\\\\\\                         ||
-;;           \\\\\\\\\\                       ||
-;;            \\\\\\\\                       ||  
-;;             \\\\\\\\           \\\\\\\\\\      ||       
-;;               \\\\\\         \\\\\\\\\\\\\\\\\\   || 
-;;        __    __\\\\\\__    \\\\\\\\\\\\\\|\\ \\\\\\\\|| 
-;;       /  |  /       \\  \\\\\\\\\\\\\\\\|\\\\ ___||_    
-;;      / | | /         \\  \\\\\\\\\\\\\\\\_ \\     o \\____ 
-;;   __/ /| |/      \\    \\\\\\\\\\\\\\\\\\/               \\
-;;  |__L/ |________  \\    \\\\\\\\\\\\\\/     \\____/-----/
-;;         __/ /\\     \\    \\\\\\\\\\/        /
-;;        |__L/  \\ \\   \\    \\\\\\/      / /     
-;;                \\ \\   \\_   \\/      / / 
-;;                 \\ \\       /      / / 
-;;                  \\ \\/           / /    
-;;                   \\ |          / /  
-;;                    \\|           /
-;;                     |    |     /
-;;                     \\    |____/|
-;;                      \\   |  \\  |
-;;                       \\  |   \\ \\
-;;                        \\ \\    \\ \\
-;;                         \\ \\    \\ \\
-;;                          \\ \\    \\ \\
-;;                           \\ \\    \\_\\
-;;                            \\_\\    | \\
-;;                             | \\   \\\\|
-;;                             \\\\|    \\|
-;;                              \\|")
-
-;; this puts focus on opened help windows
-(setq help-window-select t)
+(setq dope-unicorn "
+;;               \\
+;;                \\
+;;                 \\\\
+;;                  \\\\
+;;                   >\\/7
+;;               _.-(6'  \\
+;;              (=___._/` \\
+;;                   )  \\ |
+;;                  /   / |
+;;                 /    > /
+;;                j    < _\\
+;;            _.-' :      ``.
+;;            \\ r=._\\        `.
+;;           <`\\\\_  \\         .`-.
+;;            \\ r-7  `-. ._  ' .  `\\
+;;             \\`,      `-.`7  7)   )
+;;              \\/         \\|  \\'  / `-._
+;;                         ||    .'
+;;                          \\\\  (
+;;                           >\\  >
+;;                       ,.-' >.'
+;;                      <.'_.''
+;;                        <'")
+(setq initial-scratch-message dope-unicorn)
 
 ;;;*** Hooks
 
 ;;; Normally this type of stuff is set up within my use-package configs, but
 ;;; there aren't use-package configs for built-in stuff like dired. So those
 ;;; kind of hooks for vanilla emacs stuff lives here.
+;;;
+;;; This feels pretty messy. I'd like a way to oranize this stuff better.
+
+(add-hook 'shell-mode-hook 'evil-normal-state)
 
 (defun emu-open-finder-here ()
   (interactive)
@@ -726,7 +771,7 @@ http://flatuicolors.com/palette/defo
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
+    (masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

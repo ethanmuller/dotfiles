@@ -362,7 +362,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
             "pp" 'projectile-switch-project
             "pf" 'counsel-projectile-find-file
             "pa" 'projectile-run-async-shell-command-in-root
-            "ps" 'counsel-projectile-ag)
+            "ps" 'counsel-projectile-ag
+            "pk" 'projectile-add-known-project)
 
   :config
   (projectile-global-mode)

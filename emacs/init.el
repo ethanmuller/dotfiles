@@ -1,17 +1,13 @@
  ;;;* My Emacs Config (hit TAB to expand)
 ;;;** OS-specific config
-(when (equal current-os 'windows)
-  (message "you're in windows, nerd")
+(when (eq system-type 'windows-nt)
+  (message "you're in Windows, nerd")
   )
 
-(when (equal current-os 'macos)
+(when (equal system-type 'darwin)
   (message "you're in macOS, hipster")
   (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
   (setq exec-path (append exec-path '("/usr/local/bin")))
-  )
-
-(when (equal current-os 'linux)
-  (message "you're in linux, nerd")
   )
 
 ;;;** Package system setup

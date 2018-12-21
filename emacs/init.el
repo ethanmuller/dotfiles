@@ -1,4 +1,19 @@
-;;;* My Emacs Config (hit TAB to expand)
+ ;;;* My Emacs Config (hit TAB to expand)
+;;;** OS-specific config
+(when (equal current-os 'windows)
+  (message "you're in windows, nerd")
+  )
+
+(when (equal current-os 'macos)
+  (message "you're in macOS, hipster")
+  (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
+  (setq exec-path (append exec-path '("/usr/local/bin")))
+  )
+
+(when (equal current-os 'linux)
+  (message "you're in linux, nerd")
+  )
+
 ;;;** Package system setup
 (require 'package)
 (add-to-list
@@ -22,21 +37,6 @@
 
 (eval-when-compile
   (require 'use-package))
-
-(setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
-(setq exec-path (append exec-path '("/usr/local/bin")))
-
-(defvar emu-dropbox-path "~"
-  "Variable containing the file path to my personal dropbox folder.")
-
-(if (file-exists-p "~/Dropbox (Personal)/")
-    (setq emu-dropbox-path "~/Dropbox (Personal)/"))
-
-(defun emu-org-scratch ()
-  "Make a new 'org-mode' buffer."
-  (interactive)
-  (switch-to-buffer (get-buffer-create "new.org"))
-  (org-mode))
 
 ;;;** Package initialization & config
 ;;;*** Org
@@ -112,6 +112,13 @@
   (evil-org-agenda-set-keys))
 
 ;;;*** Functions
+
+(defun emu-org-scratch ()
+  "Make a new 'org-mode' buffer."
+  (interactive)
+  (switch-to-buffer (get-buffer-create "new.org"))
+  (org-mode))
+
 (defun emu-dired-open-file-at-point ()
   "Open the file at point in the OS's default application"
   (interactive)
@@ -148,7 +155,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 (defun emu-open-config-file ()
   "Open the emacs config file."
   (interactive)
-  (find-file "~/.emacs.d/init.el"))
+  (find-file user-init-file))
 ;;;*** General
 (use-package general
   :config
@@ -186,16 +193,18 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "jh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/home.org"))) :which-key "home org")
    "jw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/work.org"))) :which-key "work org")
    "jo" 'counsel-org-goto
-    ;; (concat emu-dropbox-path "org/home.org")
 
    "e" '(:ignore t :which-key "edit ✏")
    "ec"   'emu-copy-file-name-to-clipboard
+   "ed"   'delete-blank-lines
 
    "b" '(:ignore t :which-key "buffers 🖹")
    "bs" 'ivy-switch-buffer
    "SPC" 'ivy-switch-buffer
    "bk" 'kill-buffer
-   "bn" 'emu-new-buffer
+   "bN" 'emu-new-buffer
+   "bn" 'next-buffer
+   "bp" 'previous-buffer
    "bb" 'evil-buffer
    "be" 'emu-open-config-file
    ;; "bb" 'counsel-bookmark
@@ -425,6 +434,10 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (setq web-mode-markup-indent-offset 2))
 
 ;;;*** Other
+(use-package exec-path-from-shell)
+
+(use-package npm-mode)
+
 ;; (use-package sound-wav
 ;;   :config
 ;;   (setq ring-bell-function (lambda ()

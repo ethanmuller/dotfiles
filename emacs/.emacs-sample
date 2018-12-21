@@ -1,0 +1,19 @@
+;; This file is used to set some platform-specific variables,
+;; and then load the rest of my config. To set this up:
+;;
+;; 1. Fill in these variables with appropriate values
+;;
+;; 2. Copy this file to where emacs looks for configuration,
+;; like "~/.emacs"
+;; or "C:\Users\Username\AppData\Roaming.emacs"
+
+(setq user-init-file "C:/Users/Ethan/git/dotfiles/emacs/init.el")
+(setq user-emacs-directory "C:/Users/Ethan/.emacs.d/")
+(setq default-directory "C:/Users/Ethan/")
+(setenv "HOME" default-directory)
+
+(defvar emu-dropbox-path "~/Dropbox/"
+  "String of file path containing Dropbox directory.
+This is used to look for an org directory.")
+
+(load user-init-file)

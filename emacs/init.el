@@ -148,7 +148,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 (defun emu-open-config-file ()
   "Open the emacs config file."
   (interactive)
-  (find-file "~/.emacs.d/init.el"))
+  (find-file user-init-file))
 ;;;*** General
 (use-package general
   :config

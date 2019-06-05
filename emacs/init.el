@@ -42,6 +42,11 @@
 ;;;*** Org
 (use-package ox-gfm)
 
+(use-package ox-jira
+             :config (add-to-list 'org-export-backends 'jira))
+
+(require 'ox-odt)
+
 (use-package org
   :config
   (define-key global-map "\C-cl" 'org-store-link)
@@ -70,8 +75,8 @@
   ;; This logs the date/time TODO items are marked DONE
   (setq org-log-done t)
 
-  ;; (setq org-todo-keywords
-  ;;     '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
+  (setq org-todo-keywords
+        '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
 
   ;; This tells org-mode where my org files live
   (setq org-agenda-files (list (concat emu-dropbox-path "org")))
@@ -99,7 +104,7 @@
         `(("h" "Home task" entry (file+headline ,(concat emu-dropbox-path "org/home.org") "Unorganized Tasks") "** TODO %?\n  %i\n")
           ("c" "Work task" entry (file+headline ,(concat emu-dropbox-path "org/work.org") "Tasks") "* TODO %? %^g")
           ("p" "Project Idea" entry (file ,(concat emu-dropbox-path "org/projects.org")) "* %?")
-          ("a" "Emacs Annoyance" item (file+headline ,(concat emu-dropbox-path "org/projects.org") "Emacs Annoyances") "%?")
+          ("j" "Jira Annoyance" item (file+headline ,(concat emu-dropbox-path "org/work.org") "Why I Hate Jira") "%?")
           ("b" "Blog idea" entry (file  ,(concat emu-dropbox-path "org/posts.org")) "* %?"))))
 
 
@@ -193,7 +198,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
    "b" '(:ignore t :which-key "buffers 🖹")
    "bs" 'ivy-switch-buffer
-   "SPC" 'ivy-switch-buffer
+   "SPC" 'evil-buffer
    "bk" 'kill-buffer
    "bn" 'emu-new-buffer
    "bb" 'evil-buffer
@@ -209,6 +214,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "vz" '((lambda () (interactive) (text-scale-adjust 0.5)) :which-key "adjust font size")
 
    "h" 'help-command
+
+   "c" 'org-capture
 
    ))
 ;;;*** Evil
@@ -230,8 +237,10 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
     "wl" 'evil-window-right
     "wc" 'evil-window-delete
     "wo" 'delete-other-windows
-    "ws" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
-    "wv" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
+    ;; "ws" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
+    ;; "wv" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
+    "ws" 'evil-window-split
+    "wv" 'evil-window-vsplit
     "C-w" nil
     ;; "C-w s" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
     ;; "C-w v" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
@@ -246,17 +255,17 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "k" 'evil-previous-visual-line)
 
   (general-def 'motion 'override
-   ;; Use arrow keys for window movement
-   "<left>" 'evil-window-left
-   "<down>" 'evil-window-down
-   "<up>" 'evil-window-up
-   "<right>" 'evil-window-right
+   ;; Use ctrl + arrow keys for window movement
+   "C-<left>" 'evil-window-left
+   "C-<down>" 'evil-window-down
+   "C-<up>" 'evil-window-up
+   "C-<right>" 'evil-window-right
 
    ;; Use shift + arrow keys to throw window
    "S-<right>" 'evil-window-right
    "S-<left>" 'evil-window-move-far-left
-   "S-<down>" 'evil-window-move-very-top
-   "S-<up>" 'evil-window-move-very-bottom
+   "S-<down>" 'evil-window-move-very-bottom
+   "S-<up>" 'evil-window-move-very-top
    "S-<right>" 'evil-window-move-far-right
 
    "-" 'emu-open-dired-here
@@ -301,12 +310,31 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :pin melpa-stable
   :config
   (magit-auto-revert-mode)
+  (magit-save-repository-buffers)
 
   (vc-mode vc-mode)
 
   ;; Speed things up a little
   ;; https://williambert.online/2015/11/How-I-made-Magit-fast-again/
   (setq magit-commit-show-diff nil)
+
+  ;; https://endlessparentheses.com/easily-create-github-prs-from-magit.html
+  (defun endless/visit-pull-request-url ()
+    "Visit the current branch's PR on Github."
+    (interactive)
+    (browse-url
+     (format "https://github.com/%s/pull/new/%s"
+             (replace-regexp-in-string
+              "\\`.+github\\.com:\\(.+\\)\\.git\\'" "\\1"
+              (magit-get "remote"
+                         (magit-get-current-remote)
+                         "url"))
+             (magit-get-current-branch))))
+
+  (eval-after-load 'magit
+    '(define-key magit-mode-map "V"
+       #'endless/visit-pull-request-url))
+
 
   ;; Prevent magit from making new splits, but only sometimes
   ;; https://github.com/magit/magit/issues/2541
@@ -414,6 +442,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
 (use-package markdown-mode)
 
+(use-package csharp-mode)
+
 (use-package handlebars-sgml-mode)
 
 (use-package scss-mode
@@ -421,7 +451,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
 (use-package web-mode
   :pin melpa-stable
-  :mode "\\.html.erb\\'"
+  :mode "\\.cshtml\\'"
   :config
   (setq web-mode-markup-indent-offset 2))
 
@@ -436,13 +466,26 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 ;; (use-package dsvn)
 ;; (use-package masvn)
 
+(use-package npm-mode
+  :config
+  (npm-global-mode)
+  (spc-leader-def
+    "n" (general-simulate-key "C-c n")))
+
+(use-package nvm
+  :config
+  (nvm-use "10.13.0"))
+
 (use-package flycheck
-  :pin melpa-stable
   :config
   ;; Show errors in minibuffer instantly
-  (setq flycheck-display-errors-delay 0.1)
   (global-flycheck-mode)
-  (setq flycheck-global-modes '(emacs-lisp-mode ruby-mode common-lisp-mode)))
+
+  (general-define-key
+   :states '(motion)
+   "]e" 'flycheck-next-error
+   "[e" 'flycheck-previous-error)
+  )
 
 (use-package ag)
 
@@ -623,7 +666,8 @@ http://flatuicolors.com/palette/defo
 
 ;; http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
 (defun emu-copy-file-name-to-clipboard ()
-  "Copy the current buffer file name to the clipboard."
+  "Copy the current buffer file name to the clipboard.
+If in a project, copy the file path relative to the project root."
   (interactive)
   (let* ((filename (if (equal major-mode 'dired-mode)
                       default-directory
@@ -772,10 +816,10 @@ http://flatuicolors.com/palette/defo
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
+    (ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:foreground "#2c3e50" :background "#ecf0f1")))))

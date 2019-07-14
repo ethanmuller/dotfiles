@@ -32,6 +32,15 @@
 (if (file-exists-p "~/Dropbox (Personal)/")
     (setq emu-dropbox-path "~/Dropbox (Personal)/"))
 
+(defvar emu-org-path (concat emu-dropbox-path "Documents/org")
+  "Variable containing the file path to my org files.")
+
+(defun emu-region-to-file (begin end)
+  "Move region to a file"
+  (interactive "r")
+  (call-interactively 'write-region)
+  (call-interactively 'kill-region))
+
 (defun emu-org-scratch ()
   "Make a new 'org-mode' buffer."
   (interactive)
@@ -79,7 +88,7 @@
         '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
 
   ;; This tells org-mode where my org files live
-  (setq org-agenda-files (list (concat emu-dropbox-path "org")))
+  (setq org-agenda-files (list emu-org-path))
 
   ;; This lets me refile across all my agenda files
   (setq org-refile-targets
@@ -98,14 +107,15 @@
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
   ;; (setq org-archive-location "~/data/org/archive/%s::")
-  (setq org-archive-location (concat emu-dropbox-path "org/archive/%s::"))
+  (setq org-archive-location (concat emu-org-path "archive/%s::"))
+  
 
   (setq org-capture-templates
-        `(("h" "Home task" entry (file+headline ,(concat emu-dropbox-path "org/home.org") "Unorganized Tasks") "** TODO %?\n  %i\n")
-          ("c" "Work task" entry (file+headline ,(concat emu-dropbox-path "org/work.org") "Tasks") "* TODO %? %^g")
-          ("p" "Project Idea" entry (file ,(concat emu-dropbox-path "org/projects.org")) "* %?")
-          ("j" "Jira Annoyance" item (file+headline ,(concat emu-dropbox-path "org/work.org") "Why I Hate Jira") "%?")
-          ("b" "Blog idea" entry (file  ,(concat emu-dropbox-path "org/posts.org")) "* %?"))))
+        `(("h" "Home task" entry (file+headline ,(concat emu-org-path "home.org") "Unorganized Tasks") "** TODO %?\n  %i\n")
+          ("c" "Work task" entry (file+headline ,(concat emu-org-path "work.org") "Tasks") "* TODO %? %^g")
+          ("p" "Project Idea" entry (file ,(concat emu-org-path "projects.org")) "* %?")
+          ("j" "Jira Annoyance" item (file+headline ,(concat emu-org-path "work.org") "Why I Hate Jira") "%?")
+          ("b" "Blog idea" entry (file  ,(concat emu-org-path "posts.org")) "* %?"))))
 
 
 (use-package evil-org
@@ -184,13 +194,15 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "fs" 'save-buffer
    "fw" 'write-file
    "fr" 'counsel-recentf
+   "fc" 'emu-region-to-file
 
    "j" '(:ignore t :which-key "jump 🕴")
    "je" 'emu-open-config-file
    "jb" 'counsel-bookmark
-   "jh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/home.org"))) :which-key "home org")
-   "jw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/work.org"))) :which-key "work org")
+   "jh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/home.org"))) :which-key "home org")
+   "jw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/work.org"))) :which-key "work org")
    "jo" 'counsel-org-goto
+   "jc" '(lambda () (interactive) (switch-to-buffer-other-window "*compilation*"))
     ;; (concat emu-dropbox-path "org/home.org")
 
    "e" '(:ignore t :which-key "edit ✏")
@@ -204,8 +216,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "bb" 'evil-buffer
    "be" 'emu-open-config-file
    ;; "bb" 'counsel-bookmark
-   "bh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/home.org"))) :which-key "home org")
-   "bw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/work.org"))) :which-key "work org")
 
    "v" '(:ignore t :which-key "view 👁")
    "vt" 'toggle-truncate-lines
@@ -224,6 +234,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; It emulates vim inside of emacs.
   :config
   (evil-mode 1)
+  
+  (evil-set-initial-state 'wdired-mode 'normal)
+
   (spc-leader-def
     "w" '(:ignore t :which-key "windows 📖")
     ;; ugh, I gotta figure out how to use SPC w to simulate "C-w"
@@ -451,20 +464,27 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
 (use-package web-mode
   :pin melpa-stable
-  :mode "\\.cshtml\\'"
+  :mode ("\\.cshtml\\'" "\\.hbs\\'")
   :config
   (setq web-mode-markup-indent-offset 2))
 
 ;;;*** Other
-;; (use-package sound-wav
-;;   :config
-;;   (setq ring-bell-function (lambda ()
-;;                              ;; (play-sound '(sound :file "~/.emacs.d/sound/bell.wav"))
-;;                              ;; (sound-wav-play  "~/.emacs.d/sound/bell.wav")
-;;                              )))
+  ;; (use-package sound-wav
+  ;;   :config
+  ;;   (setq ring-bell-function (lambda ()
+  ;;                              ;; (play-sound '(sound :file "~/.emacs.d/sound/bell.wav"))
+  ;;                              ;; (sound-wav-play  "~/.emacs.d/sound/bell.wav")
+  ;;                              )))
 
-;; (use-package dsvn)
-;; (use-package masvn)
+  ;; (use-package dsvn)
+  ;; (use-package masvn)
+
+
+
+(use-package auto-complete
+  :config
+  (ac-config-default)
+  (global-auto-complete-mode t))
 
 (use-package npm-mode
   :config
@@ -490,6 +510,25 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 (use-package ag)
 
 (use-package rvm)
+
+(use-package engine-mode
+  :config
+  (defengine duckduckgo
+    "https://duckduckgo.com/?q=%s")
+  (defengine mdn
+    "https://developer.mozilla.org/en-US/search?q=%s")
+  (defengine jira
+    "https://sparkbox.atlassian.net/browse/%s")
+  (defengine caniuse
+    "https://caniuse.com/#search=%s")
+
+  (spc-leader-def
+    "/d" 'engine/search-duckduckgo
+    "/j" 'engine/search-jira
+    "/c" 'engine/search-caniuse
+    "/m" 'engine/search-mdn)
+
+  (engine-mode t))
 
 (use-package rspec-mode
   :mode
@@ -714,12 +753,12 @@ If in a project, copy the file path relative to the project root."
 
 ;; a little encouragement while starting up emacs
 (setq dope-unicorn "
-;;               \\
 ;;                \\
-;;                 \\\\
+;;                 \\
 ;;                  \\\\
-;;                   >\\/7
-;;               _.-(6'  \\
+;;                   \\\\
+;; LET'S BOOGIE       >\\/7
+;;           \\   _.-(6'  \\
 ;;              (=___._/` \\
 ;;                   )  \\ |
 ;;                  /   / |
@@ -753,7 +792,10 @@ If in a project, copy the file path relative to the project root."
   (interactive)
   (shell-command "open ."))
 
+
 (defun emu-dired-mode-hook-func ()
+  (spc-leader-def
+    "br" 'dired-toggle-read-only)
   (evil-define-key 'normal dired-mode-map
     "n" 'evil-search-next
     "N" 'evil-search-previous
@@ -765,6 +807,13 @@ If in a project, copy the file path relative to the project root."
     "O" 'emu-dired-open-file-at-point)
   (dired-hide-details-mode 1))
 (add-hook 'dired-mode-hook 'emu-dired-mode-hook-func)
+
+(defun emu-wdired-mode-hook-func ()
+  (message "yo")
+  (spc-leader-def
+    "br" 'wdired-exit)
+  )
+(add-hook 'wdired-mode-hook 'emu-wdired-mode-hook-func)
 
 (defun emu-eshell-mode-hook-func ()
   ;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
@@ -816,7 +865,7 @@ If in a project, copy the file path relative to the project root."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
+    (auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -59,9 +59,38 @@
 (eval-when-compile
   (require 'use-package))
 
+(setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
+(setq exec-path (append exec-path '("/usr/local/bin")))
+
+(defvar emu-dropbox-path "~"
+  "Variable containing the file path to my personal dropbox folder.")
+
+(if (file-exists-p "~/Dropbox (Personal)/")
+    (setq emu-dropbox-path "~/Dropbox (Personal)/"))
+
+(defvar emu-org-path (concat emu-dropbox-path "Documents/org")
+  "Variable containing the file path to my org files.")
+
+(defun emu-region-to-file (begin end)
+  "Move region to a file"
+  (interactive "r")
+  (call-interactively 'write-region)
+  (call-interactively 'kill-region))
+
+(defun emu-org-scratch ()
+  "Make a new 'org-mode' buffer."
+  (interactive)
+  (switch-to-buffer (get-buffer-create "new.org"))
+  (org-mode))
+
 ;;;** Package initialization & config
 ;;;*** Org
 (use-package ox-gfm)
+
+(use-package ox-jira
+             :config (add-to-list 'org-export-backends 'jira))
+
+(require 'ox-odt)
 
 (use-package org
   :config
@@ -92,10 +121,10 @@
   (setq org-log-done t)
 
   (setq org-todo-keywords
-      '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
+        '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
 
   ;; This tells org-mode where my org files live
-  (setq org-agenda-files (list (concat emu-dropbox-path "documents/org")))
+  (setq org-agenda-files (list emu-org-path))
 
   ;; This lets me refile across all my agenda files
   (setq org-refile-targets
@@ -114,14 +143,12 @@
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
   ;; (setq org-archive-location "~/data/org/archive/%s::")
-  (setq org-archive-location (concat emu-dropbox-path "documents/org/archive/%s::"))
+  (setq org-archive-location (concat emu-org-path "archive/%s::"))
+  
 
   (setq org-capture-templates
-        `(("h" "Home task" entry (file+headline ,(concat emu-dropbox-path "documents/org/home.org") "Unorganized Tasks") "** TODO %?\n  %i\n")
-          ("c" "Work task" entry (file+headline ,(concat emu-dropbox-path "documents/org/work.org") "Tasks") "* TODO %? %^g")
-          ("p" "Project Idea" entry (file ,(concat emu-dropbox-path "documents/org/projects.org")) "* %?")
-          ("a" "Emacs Annoyance" item (file+headline ,(concat emu-dropbox-path "documents/org/projects.org") "Emacs Annoyances") "%?")
-          ("b" "Blog idea" entry (file  ,(concat emu-dropbox-path "documents/org/posts.org")) "* %?"))))
+        `(("h" "Home task" entry (file+headline ,(concat emu-org-path "home.org") "Unorganized Tasks") "** TODO %?\n  %i\n")
+          ("c" "Work task" entry (file+headline ,(concat emu-org-path "work.org") "Tasks") "* TODO %? %^g"))))
 
 
 (use-package evil-org
@@ -207,6 +234,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "fs" 'save-buffer
    "fw" 'write-file
    "fr" 'counsel-recentf
+   "fc" 'emu-region-to-file
 
    "j" '(:ignore t :which-key "jump 🕴")
    "jq" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/home.org"))) :which-key "home org")
@@ -218,6 +246,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "jj" 'outline-next-heading
    "jk" 'outline-previous-heading
    ;;
+   "jc" '(lambda () (interactive) (switch-to-buffer-other-window "*compilation*"))
    "jb" 'counsel-bookmark
 
    "e" '(:ignore t :which-key "edit ✏")
@@ -226,7 +255,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
    "b" '(:ignore t :which-key "buffers 🖹")
    "bs" 'ivy-switch-buffer
-   "SPC" 'ivy-switch-buffer
+   "SPC" 'evil-buffer
    "bk" 'kill-buffer
    "bN" 'emu-new-buffer
    "bn" 'next-buffer
@@ -234,8 +263,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "bb" 'evil-buffer
    "be" 'emu-open-config-file
    ;; "bb" 'counsel-bookmark
-   "bh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/home.org"))) :which-key "home org")
-   "bw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/work.org"))) :which-key "work org")
 
    "oa" 'org-agenda
    "oc" 'org-capture
@@ -255,6 +282,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
    "h" 'help-command
 
+   "c" 'org-capture
+
    ))
 ;;;*** Evil
 (use-package evil
@@ -262,6 +291,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; It emulates vim inside of emacs.
   :config
   (evil-mode 1)
+  
+  (evil-set-initial-state 'wdired-mode 'normal)
+
   (spc-leader-def
     "w" '(:ignore t :which-key "windows 📖")
     ;; ugh, I gotta figure out how to use SPC w to simulate "C-w"
@@ -275,8 +307,10 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
     "wl" 'evil-window-right
     "wc" 'evil-window-delete
     "wo" 'delete-other-windows
-    "ws" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
-    "wv" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
+    ;; "ws" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
+    ;; "wv" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
+    "ws" 'evil-window-split
+    "wv" 'evil-window-vsplit
     "C-w" nil
     ;; "C-w s" '((lambda () (interactive) (split-window-vertically) (other-window 1) (buffer-menu)) :which-key "split 🁣")
     ;; "C-w v" '((lambda () (interactive) (split-window-horizontally) (other-window 1) (buffer-menu)) :which-key "split 🀱")
@@ -291,17 +325,17 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "k" 'evil-previous-visual-line)
 
   (general-def 'motion 'override
-   ;; Use arrow keys for window movement
-   "<left>" 'evil-window-left
-   "<down>" 'evil-window-down
-   "<up>" 'evil-window-up
-   "<right>" 'evil-window-right
+   ;; Use ctrl + arrow keys for window movement
+   "C-<left>" 'evil-window-left
+   "C-<down>" 'evil-window-down
+   "C-<up>" 'evil-window-up
+   "C-<right>" 'evil-window-right
 
    ;; Use shift + arrow keys to throw window
    "S-<right>" 'evil-window-right
    "S-<left>" 'evil-window-move-far-left
-   "S-<down>" 'evil-window-move-very-top
-   "S-<up>" 'evil-window-move-very-bottom
+   "S-<down>" 'evil-window-move-very-bottom
+   "S-<up>" 'evil-window-move-very-top
    "S-<right>" 'evil-window-move-far-right
 
    "-" 'emu-open-dired-here
@@ -346,12 +380,31 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :pin melpa-stable
   :config
   (magit-auto-revert-mode)
+  (magit-save-repository-buffers)
 
   (vc-mode vc-mode)
 
   ;; Speed things up a little
   ;; https://williambert.online/2015/11/How-I-made-Magit-fast-again/
   (setq magit-commit-show-diff nil)
+
+  ;; https://endlessparentheses.com/easily-create-github-prs-from-magit.html
+  (defun endless/visit-pull-request-url ()
+    "Visit the current branch's PR on Github."
+    (interactive)
+    (browse-url
+     (format "https://github.com/%s/pull/new/%s"
+             (replace-regexp-in-string
+              "\\`.+github\\.com:\\(.+\\)\\.git\\'" "\\1"
+              (magit-get "remote"
+                         (magit-get-current-remote)
+                         "url"))
+             (magit-get-current-branch))))
+
+  (eval-after-load 'magit
+    '(define-key magit-mode-map "V"
+       #'endless/visit-pull-request-url))
+
 
   ;; Prevent magit from making new splits, but only sometimes
   ;; https://github.com/magit/magit/issues/2541
@@ -407,7 +460,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
             "pp" 'projectile-switch-project
             "pf" 'counsel-projectile-find-file
             "pa" 'projectile-run-async-shell-command-in-root
-            "ps" 'counsel-projectile-ag)
+            "ps" 'counsel-projectile-ag
+            "pk" 'projectile-add-known-project)
 
   :config
   (projectile-global-mode)
@@ -466,6 +520,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
 (use-package markdown-mode)
 
+(use-package csharp-mode)
+
 (use-package handlebars-sgml-mode)
 
 (use-package scss-mode
@@ -473,7 +529,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
 (use-package web-mode
   :pin melpa-stable
-  :mode "\\.html.erb\\'"
+  :mode ("\\.cshtml\\'" "\\.hbs\\'")
   :config
   (setq web-mode-markup-indent-offset 2))
 
@@ -489,20 +545,54 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 ;;                              ;; (sound-wav-play  "~/.emacs.d/sound/bell.wav")
 ;;                              )))
 
-;; (use-package dsvn)
-;; (use-package masvn)
+(use-package auto-complete
+  :config
+  (ac-config-default)
+  (global-auto-complete-mode t))
+
+(use-package npm-mode
+  :config
+  (npm-global-mode)
+  (spc-leader-def
+    "n" (general-simulate-key "C-c n")))
+
+(use-package nvm
+  :config
+  (nvm-use "10.13.0"))
 
 (use-package flycheck
-  :pin melpa-stable
   :config
   ;; Show errors in minibuffer instantly
-  (setq flycheck-display-errors-delay 0.1)
   (global-flycheck-mode)
-  (setq flycheck-global-modes '(emacs-lisp-mode ruby-mode common-lisp-mode)))
+
+  (general-define-key
+   :states '(motion)
+   "]e" 'flycheck-next-error
+   "[e" 'flycheck-previous-error)
+  )
 
 (use-package ag)
 
 (use-package rvm)
+
+(use-package engine-mode
+  :config
+  (defengine duckduckgo
+    "https://duckduckgo.com/?q=%s")
+  (defengine mdn
+    "https://developer.mozilla.org/en-US/search?q=%s")
+  (defengine jira
+    "https://sparkbox.atlassian.net/browse/%s")
+  (defengine caniuse
+    "https://caniuse.com/#search=%s")
+
+  (spc-leader-def
+    "/d" 'engine/search-duckduckgo
+    "/j" 'engine/search-jira
+    "/c" 'engine/search-caniuse
+    "/m" 'engine/search-mdn)
+
+  (engine-mode t))
 
 (use-package rspec-mode
   :mode
@@ -705,7 +795,8 @@ http://flatuicolors.com/palette/defo
 
 ;; http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
 (defun emu-copy-file-name-to-clipboard ()
-  "Copy the current buffer file name to the clipboard."
+  "Copy the current buffer file name to the clipboard.
+If in a project, copy the file path relative to the project root."
   (interactive)
   (let* ((filename (if (equal major-mode 'dired-mode)
                       default-directory
@@ -755,10 +846,11 @@ http://flatuicolors.com/palette/defo
 ;;
 ;;               \\
 ;;                \\
-;;                 \\\\
+;;                 \\
 ;;                  \\\\
-;;                   >\\/7
-;;               _.-(6'  \\
+;;                   \\\\
+;; LET'S BOOGIE       >\\/7
+;;           \\   _.-(6'  \\
 ;;              (=___._/` \\
 ;;                   )  \\ |
 ;;                  /   / |
@@ -793,7 +885,10 @@ http://flatuicolors.com/palette/defo
   (interactive)
   (shell-command "open ."))
 
+
 (defun emu-dired-mode-hook-func ()
+  (spc-leader-def
+    "br" 'dired-toggle-read-only)
   (evil-define-key 'normal dired-mode-map
     "n" 'evil-search-next
     "N" 'evil-search-previous
@@ -805,6 +900,13 @@ http://flatuicolors.com/palette/defo
     "O" 'emu-dired-open-file-at-point)
   (dired-hide-details-mode 1))
 (add-hook 'dired-mode-hook 'emu-dired-mode-hook-func)
+
+(defun emu-wdired-mode-hook-func ()
+  (message "yo")
+  (spc-leader-def
+    "br" 'wdired-exit)
+  )
+(add-hook 'wdired-mode-hook 'emu-wdired-mode-hook-func)
 
 (defun emu-eshell-mode-hook-func ()
   ;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
@@ -855,8 +957,7 @@ http://flatuicolors.com/palette/defo
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   (quote
-    (lab-themes purp-theme npm-mode exec-path-from-shell masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
+   '(csharp-mode ox-jira lab-themes purp-theme npm-mode exec-path-from-shell masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

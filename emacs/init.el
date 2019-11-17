@@ -68,7 +68,7 @@
 (if (file-exists-p "~/Dropbox (Personal)/")
     (setq emu-dropbox-path "~/Dropbox (Personal)/"))
 
-(defvar emu-org-path (concat emu-dropbox-path "Documents/org")
+(defvar emu-org-path (concat emu-dropbox-path "Documents/org/")
   "Variable containing the file path to my org files.")
 
 (defun emu-region-to-file (begin end)
@@ -147,8 +147,8 @@
   
 
   (setq org-capture-templates
-        `(("h" "Home task" entry (file+headline ,(concat emu-org-path "home.org") "Unorganized Tasks") "** TODO %?\n  %i\n")
-          ("c" "Work task" entry (file+headline ,(concat emu-org-path "work.org") "Tasks") "* TODO %? %^g"))))
+        `(("c" "Home task" entry (file+headline ,(concat emu-org-path "home.org") "tasks") "* TODO %?\n  %i\n")
+          ("w" "Work task" entry (file+headline ,(concat emu-org-path "work.org") "Tasks") "* TODO %? %^g"))))
 
 
 (use-package evil-org
@@ -187,7 +187,7 @@
 (defun emu-new-buffer ()
   "Open a new buffer."
   (interactive)
-  (switch-to-buffer (generate-new-buffer "*scratch*")))
+  (switch-to-buffer (generate-new-buffer "new buffer")))
 
 (defun emu-insert-date ()
   "Insert current date into buffer."
@@ -199,6 +199,17 @@
 Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (interactive)
   (insert (shell-command-to-string "echo -n $(date +%B)")))
+
+(defun explorg-publish-region ()
+  "Publish region to ethanmuller.org"
+  (interactive)
+  (write-region (region-beginning) (region-end) "~/ethanmuller.org")
+  (explorg-deploy))
+
+(defun explorg-deploy ()
+  "Copy explorg file to the server"
+  (interactive)
+  (shell-command "scp ~/ethanmuller.org emu@142.93.79.128:~/explorg/ethanmuller.org"))
 
 (defun emu-open-config-file ()
   "Open the emacs config file."
@@ -246,12 +257,15 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "jj" 'outline-next-heading
    "jk" 'outline-previous-heading
    ;;
-   "jc" '(lambda () (interactive) (switch-to-buffer-other-window "*compilation*"))
+   "jc" '(lambda () (interactive) (switch-to-buffer "*compilation*"))
    "jb" 'counsel-bookmark
 
    "e" '(:ignore t :which-key "edit ✏")
    "ec"   'emu-copy-file-name-to-clipboard
    "ed"   'delete-blank-lines
+
+   "y" '(:ignore t :which-key "clipboard")
+   "yf"   'emu-copy-file-name-to-clipboard
 
    "b" '(:ignore t :which-key "buffers 🖹")
    "bs" 'ivy-switch-buffer
@@ -273,11 +287,13 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
            (interactive)
            (setq current-prefix-arg '(4)) ; C-u
            (call-interactively 'org-todo))
+   "op"   'explorg-publish-region
 
    "v" '(:ignore t :which-key "view 👁")
    "vt" 'toggle-truncate-lines
    "vl" 'emu-toggle-line-numbers-type
    "vj" 'recenter
+   "vc" 'centered-cursor-mode
    "vz" '((lambda () (interactive) (text-scale-adjust 0.5)) :which-key "adjust font size")
 
    "h" 'help-command
@@ -375,6 +391,11 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :config
   (add-hook 'emacs-lisp-mode-hook 'evil-paredit-mode))
 
+(use-package evil-numbers
+  :general (spc-leader-def
+             "ia" 'evil-numbers/inc-at-pt
+             "iz" 'evil-numbers/dec-at-pt))
+
 ;;;*** Magit
 (use-package magit
   :pin melpa-stable
@@ -461,6 +482,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
             "pf" 'counsel-projectile-find-file
             "pa" 'projectile-run-async-shell-command-in-root
             "ps" 'counsel-projectile-ag
+            "pc" 'projectile-compile-project
+            "pd" 'projectile-dired
             "pk" 'projectile-add-known-project)
 
   :config
@@ -510,11 +533,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   "Invoke `async-shell-command' in the project's root."
   (interactive)
   (projectile-with-default-dir (projectile-project-root)
+    (save-some-buffers)
     (shell-command "/Applications/love.app/Contents/MacOS/love src")))
-
-(use-package lua-mode
-  :mode "\\.p8\\'"
-  :bind ("C-SPC" . 'emu-run-src-in-love))
 
 (use-package twig-mode)
 
@@ -537,6 +557,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 (use-package exec-path-from-shell)
 
 (use-package npm-mode)
+
+(use-package centered-cursor-mode)
 
 ;; (use-package sound-wav
 ;;   :config
@@ -606,14 +628,21 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
     :pin melpa-stable)
 
 (use-package writeroom-mode
-    :pin melpa-stable)
+  :pin melpa-stable
+  :config
+  (setq writeroom-fullscreen-effect "maximized")
+  (spc-leader-def
+    "vw" 'writeroom-mode))
 
 (use-package emmet-mode
   ;; This enables usage of emmet, which is a tool that lets you expand
   ;; CSS selector-like snippets into HTML. It also has some CSS
   ;; expansions.
-  :hook (sgml-mode css-mode)
-  :bind ("C-SPC" . emmet-expand-line))
+  :general (spc-leader-def
+             "<tab>" 'emmet-expand-line))
+
+(use-package lua-mode
+  :bind ("C-SPC" . 'emu-run-src-in-love))
 
 (use-package which-key
   :config
@@ -697,11 +726,11 @@ http://flatuicolors.com/palette/defo
                       :height 0.7
                       :box `(:line-width 4 :color ,(get-flatui-color "clouds") :style nil)
                       :foreground (get-flatui-color "concrete"))
-  (set-face-attribute 'line-number-current-line nil
-                      :weight 'bold
-                      :background (get-flatui-color "sun-flower")
-                      :box `(:line-width 4 :color ,(get-flatui-color "sun-flower") :style nil)
-                      :foreground (get-flatui-color "midnight-blue"))
+  ;; (set-face-attribute 'line-number-current-line nil
+  ;;                     :weight 'bold
+  ;;                     :background (get-flatui-color "sun-flower")
+  ;;                     :box `(:line-width 4 :color ,(get-flatui-color "sun-flower") :style nil)
+  ;;                     :foreground (get-flatui-color "midnight-blue"))
   (set-face-attribute 'org-ellipsis nil
                       :weight 'normal
                       :height 0.75
@@ -764,7 +793,7 @@ http://flatuicolors.com/palette/defo
 ;; Persistent history for eshell & other minibuffer history rings
 (savehist-mode)
 
-(setq)
+(setq compilation-scroll-output t)
 
 (when (string= system-type "darwin")
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -958,7 +987,8 @@ If in a project, copy the file path relative to the project root."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(csharp-mode ox-jira lab-themes npm-mode exec-path-from-shell masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag)))
+   (quote
+    (csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

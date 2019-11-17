@@ -655,17 +655,17 @@ http://flatuicolors.com/palette/defo
   (cdr (assoc c flatui-colors-alist)))
 
 ;;;*** Faces
-(use-package lab-themes
-  :config
-  (lab-themes-load-style 'dark)
-  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-14"))
-  (set-face-attribute 'default t :font  "Ubuntu Mono-14")
+;; (use-package lab-themes
+;;   :config
+;;   (lab-themes-load-style 'dark)
+;;   (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-14"))
+;;   (set-face-attribute 'default t :font  "Ubuntu Mono-14")
 
-  ;; Change fringe size
-  (set-fringe-mode '(10 . 10))
+;;   ;; Change fringe size
+;;   (set-fringe-mode '(10 . 10))
 
-  (setq-default line-spacing 0)
-  )
+;;   (setq-default line-spacing 0))
+
 ;; (use-package purp-theme
 ;;   :config
 ;;   ;; Better font
@@ -680,65 +680,66 @@ http://flatuicolors.com/palette/defo
 
 ;;   (setq-default line-spacing 0)
 ;;   (load-theme 'purp t))
-;; (defun emu-set-faces (bg-color)
-;;   (interactive)
-;;   (set-face-attribute 'show-paren-match nil
-;;                       :background (get-flatui-color "sun-flower")
-;;                       :foreground (get-flatui-color "wet-asphalt")
-;;                       :weight 'bold)
-;;   (set-face-attribute 'default nil
-;;                       :background bg-color)
-;;   (set-face-attribute 'fringe nil
-;;                       :background bg-color)
-;;   (set-face-attribute 'hl-line nil
-;;                       :background "#f3f8f8")
-;;   (set-face-attribute 'line-number nil
-;;                       :height 0.7
-;;                       :box `(:line-width 4 :color ,(get-flatui-color "clouds") :style nil)
-;;                       :foreground (get-flatui-color "concrete"))
-;;   (set-face-attribute 'line-number-current-line nil
-;;                       :weight 'bold
-;;                       :background (get-flatui-color "sun-flower")
-;;                       :box `(:line-width 4 :color ,(get-flatui-color "sun-flower") :style nil)
-;;                       :foreground (get-flatui-color "midnight-blue"))
-;;   (set-face-attribute 'org-ellipsis nil
-;;                       :weight 'normal
-;;                       :height 0.75
-;;                       :foreground (get-flatui-color "wet-asphalt")
-;;                       :underline nil)
-;;   (set-face-attribute 'header-line nil
-;;                       :background (get-flatui-color "clouds")
-;;                       :foreground (get-flatui-color "wet-asphalt")
-;;                       :box `(:line-width 20 :color ,(get-flatui-color "clouds") :style nil))
-;;   (set-face-attribute 'org-agenda-date-today nil
-;;                       :background (get-flatui-color "clouds")
-;;                       :foreground (get-flatui-color "midnight-blue"))
-;;   (set-face-attribute 'mode-line nil
-;;                       :background (get-flatui-color "sun-flower")
-;;                       :foreground (get-flatui-color "midnight-blue")
-;;                       :box `(:line-width 10 :color ,(get-flatui-color "sun-flower") :style nil))
-;;   (set-face-attribute 'mode-line-inactive nil
-;;                       :background (get-flatui-color "silver")
-;;                       :foreground (get-flatui-color "asbestos")
-;;                       :box `(:line-width 10 :color ,(get-flatui-color "silver") :style nil))
-;;   (set-face-attribute 'minibuffer-prompt nil
-;;                       :background (get-flatui-color "clouds")
-;;                       :foreground (get-flatui-color "wisteria")))
 
-;; (use-package flatui-theme
-;;   ;; Nice colors!
-;;   :config
-;;   ;; Better font
-;;   (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+(defun emu-set-faces (bg-color)
+  (interactive)
+  (set-face-attribute 'show-paren-match nil
+                      :background (get-flatui-color "sun-flower")
+                      :foreground (get-flatui-color "wet-asphalt")
+                      :weight 'bold)
+  (set-face-attribute 'default nil
+                      :background bg-color)
+  (set-face-attribute 'fringe nil
+                      :background bg-color)
+  (set-face-attribute 'hl-line nil
+                      :background "#f3f8f8")
+  (set-face-attribute 'line-number nil
+                      :height 0.7
+                      :box `(:line-width 4 :color ,(get-flatui-color "clouds") :style nil)
+                      :foreground (get-flatui-color "concrete"))
+  (set-face-attribute 'line-number-current-line nil
+                      :weight 'bold
+                      :background (get-flatui-color "sun-flower")
+                      :box `(:line-width 4 :color ,(get-flatui-color "sun-flower") :style nil)
+                      :foreground (get-flatui-color "midnight-blue"))
+  (set-face-attribute 'org-ellipsis nil
+                      :weight 'normal
+                      :height 0.75
+                      :foreground (get-flatui-color "wet-asphalt")
+                      :underline nil)
+  (set-face-attribute 'header-line nil
+                      :background (get-flatui-color "clouds")
+                      :foreground (get-flatui-color "wet-asphalt")
+                      :box `(:line-width 20 :color ,(get-flatui-color "clouds") :style nil))
+  (set-face-attribute 'org-agenda-date-today nil
+                      :background (get-flatui-color "clouds")
+                      :foreground (get-flatui-color "midnight-blue"))
+  (set-face-attribute 'mode-line nil
+                      :background (get-flatui-color "sun-flower")
+                      :foreground (get-flatui-color "midnight-blue")
+                      :box `(:line-width 10 :color ,(get-flatui-color "sun-flower") :style nil))
+  (set-face-attribute 'mode-line-inactive nil
+                      :background (get-flatui-color "silver")
+                      :foreground (get-flatui-color "asbestos")
+                      :box `(:line-width 10 :color ,(get-flatui-color "silver") :style nil))
+  (set-face-attribute 'minibuffer-prompt nil
+                      :background (get-flatui-color "clouds")
+                      :foreground (get-flatui-color "wisteria")))
 
-;;   ;; Change fringe size
-;;   (set-fringe-mode '(10 . 10))
+(use-package flatui-theme
+  ;; Nice colors!
+  :config
+  ;; Better font
+  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
 
-;;   (setq-default line-spacing 0)
+  ;; Change fringe size
+  (set-fringe-mode '(10 . 10))
 
-;;   (setq frame-background-mode 'light)
+  (setq-default line-spacing 0)
 
-;;   (emu-set-faces (get-flatui-color "clouds")))
+  (setq frame-background-mode 'light)
+
+  (emu-set-faces (get-flatui-color "clouds")))
 
 
 
@@ -957,7 +958,7 @@ If in a project, copy the file path relative to the project root."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(csharp-mode ox-jira lab-themes purp-theme npm-mode exec-path-from-shell masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag)))
+   '(csharp-mode ox-jira lab-themes npm-mode exec-path-from-shell masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

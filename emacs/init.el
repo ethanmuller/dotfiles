@@ -1,8 +1,33 @@
- ;;;* My Emacs Config (hit TAB to expand)
+;;;* My Emacs Config
 ;;;** OS-specific config
 (when (eq system-type 'windows-nt)
   (message "you're in Windows, nerd")
   )
+
+;; Sets your shell to use cygwin's bash, if Emacs finds it's running
+;; under Windows and c:\cygwin exists. Assumes that C:\cygwin\bin is
+;; not already in your Windows Path (it generally should not be).
+;;
+(let* ((cygwin-root "c:/cygwin")
+       (cygwin-bin (concat cygwin-root "/bin")))
+  (when (and (eq 'windows-nt system-type)
+             (file-readable-p cygwin-root))
+
+    (setq exec-path (cons cygwin-bin exec-path))
+    (setenv "PATH" (concat cygwin-bin ";" (getenv "PATH")))
+
+    ;; By default use the Windows HOME.
+    ;; Otherwise, uncomment below to set a HOME
+    ;;      (setenv "HOME" (concat cygwin-root "/home/eric"))
+
+    ;; NT-emacs assumes a Windows shell. Change to bash.
+    (setq shell-file-name "bash")
+    (setenv "SHELL" shell-file-name) 
+    (setq explicit-shell-file-name shell-file-name) 
+
+    ;; This removes unsightly ^M characters that would otherwise
+    ;; appear in the output of java applications.
+    (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)))
 
 (when (equal system-type 'darwin)
   (message "you're in macOS, hipster")
@@ -66,11 +91,11 @@
   ;; This logs the date/time TODO items are marked DONE
   (setq org-log-done t)
 
-  ;; (setq org-todo-keywords
-  ;;     '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
+  (setq org-todo-keywords
+      '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
 
   ;; This tells org-mode where my org files live
-  (setq org-agenda-files (list (concat emu-dropbox-path "org")))
+  (setq org-agenda-files (list (concat emu-dropbox-path "documents/org")))
 
   ;; This lets me refile across all my agenda files
   (setq org-refile-targets
@@ -89,14 +114,14 @@
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
   ;; (setq org-archive-location "~/data/org/archive/%s::")
-  (setq org-archive-location (concat emu-dropbox-path "org/archive/%s::"))
+  (setq org-archive-location (concat emu-dropbox-path "documents/org/archive/%s::"))
 
   (setq org-capture-templates
-        `(("h" "Home task" entry (file+headline ,(concat emu-dropbox-path "org/home.org") "Unorganized Tasks") "** TODO %?\n  %i\n")
-          ("c" "Work task" entry (file+headline ,(concat emu-dropbox-path "org/work.org") "Tasks") "* TODO %? %^g")
-          ("p" "Project Idea" entry (file ,(concat emu-dropbox-path "org/projects.org")) "* %?")
-          ("a" "Emacs Annoyance" item (file+headline ,(concat emu-dropbox-path "org/projects.org") "Emacs Annoyances") "%?")
-          ("b" "Blog idea" entry (file  ,(concat emu-dropbox-path "org/posts.org")) "* %?"))))
+        `(("h" "Home task" entry (file+headline ,(concat emu-dropbox-path "documents/org/home.org") "Unorganized Tasks") "** TODO %?\n  %i\n")
+          ("c" "Work task" entry (file+headline ,(concat emu-dropbox-path "documents/org/work.org") "Tasks") "* TODO %? %^g")
+          ("p" "Project Idea" entry (file ,(concat emu-dropbox-path "documents/org/projects.org")) "* %?")
+          ("a" "Emacs Annoyance" item (file+headline ,(concat emu-dropbox-path "documents/org/projects.org") "Emacs Annoyances") "%?")
+          ("b" "Blog idea" entry (file  ,(concat emu-dropbox-path "documents/org/posts.org")) "* %?"))))
 
 
 (use-package evil-org
@@ -184,11 +209,16 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "fr" 'counsel-recentf
 
    "j" '(:ignore t :which-key "jump 🕴")
+   "jq" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/home.org"))) :which-key "home org")
+   "jw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/work.org"))) :which-key "work org")
    "je" 'emu-open-config-file
-   "jb" 'counsel-bookmark
-   "jh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/home.org"))) :which-key "home org")
-   "jw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/work.org"))) :which-key "work org")
+   ;;
    "jo" 'counsel-org-goto
+   "jh" 'outline-up-heading
+   "jj" 'outline-next-heading
+   "jk" 'outline-previous-heading
+   ;;
+   "jb" 'counsel-bookmark
 
    "e" '(:ignore t :which-key "edit ✏")
    "ec"   'emu-copy-file-name-to-clipboard
@@ -206,6 +236,16 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    ;; "bb" 'counsel-bookmark
    "bh" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/home.org"))) :which-key "home org")
    "bw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "org/work.org"))) :which-key "work org")
+
+   "oa" 'org-agenda
+   "oc" 'org-capture
+   "os" 'org-schedule
+   "o#" 'counsel-org-tag
+   "oe" 'counsel-org-tag
+   "ot" '(lambda ()
+           (interactive)
+           (setq current-prefix-arg '(4)) ; C-u
+           (call-interactively 'org-todo))
 
    "v" '(:ignore t :which-key "view 👁")
    "vt" 'toggle-truncate-lines
@@ -354,11 +394,11 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; Nice-looking numbers
   (setq ivy-count-format "(%d/%d) "))
 
-(use-package counsel
-  ;; Counsel provides ivy-ified versions of common emacs commands
-  :diminish ""
-  :config
-  (counsel-mode 1))
+;; (use-package counsel
+;;   ;; Counsel provides ivy-ified versions of common emacs commands
+;;   :diminish ""
+;;   :config
+;;   (counsel-mode 1))
 
 (use-package projectile
   :diminish ""
@@ -372,8 +412,16 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :config
   (projectile-global-mode)
 
+  (setq projectile-indexing-method 'alien)
+
   ;; Enable caching to reduce delay when opening projectile
-  (setq projectile-enable-caching t)
+  (setq projectile-enable-caching nil)
+
+  (defun projectile-get-ext-command ()
+     (concat "c:/Users/Ethan/bin/es.exe -r " 
+        (concat (replace-regexp-in-string "/" "\\\\" default-directory t t) 
+        ".+[^\\\\]\\.[^\\\\]+$ | tr '\\n' '\\0'"))
+     )
 
   ;; Expire cache after 30 minutes
   (setq projectile-files-cache-expire (* 60 30))
@@ -516,65 +564,91 @@ http://flatuicolors.com/palette/defo
 "
   (cdr (assoc c flatui-colors-alist)))
 
-(defun emu-set-faces (bg-color)
-  (interactive)
-  (set-face-attribute 'show-paren-match nil
-                      :background (get-flatui-color "sun-flower")
-                      :foreground (get-flatui-color "wet-asphalt")
-                      :weight 'bold)
-  (set-face-attribute 'default nil
-                      :background bg-color)
-  (set-face-attribute 'fringe nil
-                      :background bg-color)
-  (set-face-attribute 'hl-line nil
-                      :background "#f3f8f8")
-  (set-face-attribute 'line-number nil
-                      :height 0.7
-                      :box `(:line-width 4 :color ,(get-flatui-color "clouds") :style nil)
-                      :foreground (get-flatui-color "concrete"))
-  (set-face-attribute 'line-number-current-line nil
-                      :weight 'bold
-                      :background (get-flatui-color "sun-flower")
-                      :box `(:line-width 4 :color ,(get-flatui-color "sun-flower") :style nil)
-                      :foreground (get-flatui-color "midnight-blue"))
-  (set-face-attribute 'org-ellipsis nil
-                      :weight 'normal
-                      :height 0.75
-                      :foreground (get-flatui-color "wet-asphalt")
-                      :underline nil)
-  (set-face-attribute 'header-line nil
-                      :background (get-flatui-color "clouds")
-                      :foreground (get-flatui-color "wet-asphalt")
-                      :box `(:line-width 20 :color ,(get-flatui-color "clouds") :style nil))
-  (set-face-attribute 'org-agenda-date-today nil
-                      :background (get-flatui-color "clouds")
-                      :foreground (get-flatui-color "midnight-blue"))
-  (set-face-attribute 'mode-line nil
-                      :background (get-flatui-color "sun-flower")
-                      :foreground (get-flatui-color "midnight-blue")
-                      :box `(:line-width 10 :color ,(get-flatui-color "sun-flower") :style nil))
-  (set-face-attribute 'mode-line-inactive nil
-                      :background (get-flatui-color "silver")
-                      :foreground (get-flatui-color "asbestos")
-                      :box `(:line-width 10 :color ,(get-flatui-color "silver") :style nil))
-  (set-face-attribute 'minibuffer-prompt nil
-                      :background (get-flatui-color "clouds")
-                      :foreground (get-flatui-color "wisteria")))
-
-(use-package flatui-theme
-  ;; Nice colors!
+;;;*** Faces
+(use-package lab-themes
   :config
-  ;; Better font
-  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+  (lab-themes-load-style 'dark)
+  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-14"))
+  (set-face-attribute 'default t :font  "Ubuntu Mono-14")
 
   ;; Change fringe size
   (set-fringe-mode '(10 . 10))
 
   (setq-default line-spacing 0)
+  )
+;; (use-package purp-theme
+;;   :config
+;;   ;; Better font
+;;   ;; (add-to-list 'default-frame-alist '(font . "Ubuntu:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+;;   (setq my-font "Ubuntu Mono-14")
 
-  (setq frame-background-mode 'light)
+;;   (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-14"))
+;;   (set-face-attribute 'default t :font  "Ubuntu Mono-14")
 
-  (emu-set-faces (get-flatui-color "clouds")))
+;;   ;; Change fringe size
+;;   (set-fringe-mode '(10 . 10))
+
+;;   (setq-default line-spacing 0)
+;;   (load-theme 'purp t))
+;; (defun emu-set-faces (bg-color)
+;;   (interactive)
+;;   (set-face-attribute 'show-paren-match nil
+;;                       :background (get-flatui-color "sun-flower")
+;;                       :foreground (get-flatui-color "wet-asphalt")
+;;                       :weight 'bold)
+;;   (set-face-attribute 'default nil
+;;                       :background bg-color)
+;;   (set-face-attribute 'fringe nil
+;;                       :background bg-color)
+;;   (set-face-attribute 'hl-line nil
+;;                       :background "#f3f8f8")
+;;   (set-face-attribute 'line-number nil
+;;                       :height 0.7
+;;                       :box `(:line-width 4 :color ,(get-flatui-color "clouds") :style nil)
+;;                       :foreground (get-flatui-color "concrete"))
+;;   (set-face-attribute 'line-number-current-line nil
+;;                       :weight 'bold
+;;                       :background (get-flatui-color "sun-flower")
+;;                       :box `(:line-width 4 :color ,(get-flatui-color "sun-flower") :style nil)
+;;                       :foreground (get-flatui-color "midnight-blue"))
+;;   (set-face-attribute 'org-ellipsis nil
+;;                       :weight 'normal
+;;                       :height 0.75
+;;                       :foreground (get-flatui-color "wet-asphalt")
+;;                       :underline nil)
+;;   (set-face-attribute 'header-line nil
+;;                       :background (get-flatui-color "clouds")
+;;                       :foreground (get-flatui-color "wet-asphalt")
+;;                       :box `(:line-width 20 :color ,(get-flatui-color "clouds") :style nil))
+;;   (set-face-attribute 'org-agenda-date-today nil
+;;                       :background (get-flatui-color "clouds")
+;;                       :foreground (get-flatui-color "midnight-blue"))
+;;   (set-face-attribute 'mode-line nil
+;;                       :background (get-flatui-color "sun-flower")
+;;                       :foreground (get-flatui-color "midnight-blue")
+;;                       :box `(:line-width 10 :color ,(get-flatui-color "sun-flower") :style nil))
+;;   (set-face-attribute 'mode-line-inactive nil
+;;                       :background (get-flatui-color "silver")
+;;                       :foreground (get-flatui-color "asbestos")
+;;                       :box `(:line-width 10 :color ,(get-flatui-color "silver") :style nil))
+;;   (set-face-attribute 'minibuffer-prompt nil
+;;                       :background (get-flatui-color "clouds")
+;;                       :foreground (get-flatui-color "wisteria")))
+
+;; (use-package flatui-theme
+;;   ;; Nice colors!
+;;   :config
+;;   ;; Better font
+;;   (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+
+;;   ;; Change fringe size
+;;   (set-fringe-mode '(10 . 10))
+
+;;   (setq-default line-spacing 0)
+
+;;   (setq frame-background-mode 'light)
+
+;;   (emu-set-faces (get-flatui-color "clouds")))
 
 
 
@@ -678,6 +752,7 @@ http://flatuicolors.com/palette/defo
 
 ;; a little encouragement while starting up emacs
 (setq dope-unicorn "
+;;
 ;;               \\
 ;;                \\
 ;;                 \\\\
@@ -701,7 +776,8 @@ http://flatuicolors.com/palette/defo
 ;;                       ,.-' >.'
 ;;                      <.'_.''
 ;;                        <'")
-(setq initial-scratch-message dope-unicorn)
+(setq initial-scratch-message 
+      (concat ";; Booted up in " (emacs-init-time) dope-unicorn))
 
 ;;;*** Hooks
 
@@ -780,7 +856,7 @@ http://flatuicolors.com/palette/defo
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
+    (lab-themes purp-theme npm-mode exec-path-from-shell masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

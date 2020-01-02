@@ -83,7 +83,7 @@
   (switch-to-buffer (get-buffer-create "new.org"))
   (org-mode))
 
-;;;** Package initialization & config
+;;;** Packages & package config
 ;;;*** Org
 (use-package ox-gfm)
 
@@ -147,7 +147,7 @@
   
 
   (setq org-capture-templates
-        `(("c" "Home task" entry (file+headline ,(concat emu-org-path "home.org") "tasks") "* TODO %?\n  %i\n")
+        `(("c" "Home task" entry (file+headline ,(concat emu-org-path "home.org") "projects") "* TODO %?\n  %i\n")
           ("w" "Work task" entry (file+headline ,(concat emu-org-path "work.org") "Tasks") "* TODO %? %^g"))))
 
 
@@ -160,6 +160,11 @@
   (evil-org-agenda-set-keys))
 
 ;;;*** Functions
+
+(defun emu-save-buffer (&optional arg)
+  "Wrapper function for buffer saving"
+  (interactive)
+  (save-buffer arg))
 
 (defun emu-org-scratch ()
   "Make a new 'org-mode' buffer."
@@ -242,15 +247,15 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
    "f" '(:ignore t :which-key "files 🗄")
    "ff" 'counsel-find-file
-   "fs" 'save-buffer
+   "fs" 'emu-save-buffer
    "fw" 'write-file
    "fr" 'counsel-recentf
    "fc" 'emu-region-to-file
 
    "j" '(:ignore t :which-key "jump 🕴")
-   "jq" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/home.org"))) :which-key "home org")
-   "jw" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/work.org"))) :which-key "work org")
-   "je" 'emu-open-config-file
+   "ja" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/home.org"))) :which-key "home org")
+   "js" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/work.org"))) :which-key "work org")
+   "jd" 'emu-open-config-file
    ;;
    "jo" 'counsel-org-goto
    "jh" 'outline-up-heading
@@ -283,6 +288,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "os" 'org-schedule
    "o#" 'counsel-org-tag
    "oe" 'counsel-org-tag
+   "ow" 'org-save-all-org-buffers
    "ot" '(lambda ()
            (interactive)
            (setq current-prefix-arg '(4)) ; C-u
@@ -455,6 +461,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; more than Helm because it does less, and is less overwhelming.
   ;;
   ;; https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/
+  :pin melpa-stable
   :diminish ""
   :config
   (ivy-mode 1)
@@ -468,11 +475,12 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; Nice-looking numbers
   (setq ivy-count-format "(%d/%d) "))
 
-;; (use-package counsel
-;;   ;; Counsel provides ivy-ified versions of common emacs commands
-;;   :diminish ""
-;;   :config
-;;   (counsel-mode 1))
+(use-package counsel
+  ;; Counsel provides ivy-ified versions of common emacs commands
+  :pin melpa-stable
+  :diminish ""
+  :config
+  (counsel-mode 1))
 
 (use-package projectile
   :diminish ""
@@ -494,12 +502,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; Enable caching to reduce delay when opening projectile
   (setq projectile-enable-caching nil)
 
-  (defun projectile-get-ext-command ()
-     (concat "c:/Users/Ethan/bin/es.exe -r " 
-        (concat (replace-regexp-in-string "/" "\\\\" default-directory t t) 
-        ".+[^\\\\]\\.[^\\\\]+$ | tr '\\n' '\\0'"))
-     )
-
   ;; Expire cache after 30 minutes
   (setq projectile-files-cache-expire (* 60 30))
 
@@ -507,6 +509,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (setq counsel-projectile-switch-project-action 'dired))
 
 (use-package counsel-projectile
+  :pin melpa-stable
   :config
   (counsel-projectile-mode))
 
@@ -530,11 +533,16 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :pin melpa-stable)
 
 (defun emu-run-src-in-love ()
-  "Invoke `async-shell-command' in the project's root."
   (interactive)
   (projectile-with-default-dir (projectile-project-root)
     (save-some-buffers)
     (shell-command "/Applications/love.app/Contents/MacOS/love src")))
+
+(defun emu-run-dir-in-love ()
+  (interactive)
+  (projectile-with-default-dir (projectile-project-root)
+    (save-some-buffers)
+    (shell-command "/Applications/love.app/Contents/MacOS/love .")))
 
 (use-package twig-mode)
 
@@ -553,19 +561,68 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :config
   (setq web-mode-markup-indent-offset 2))
 
+;;;*** SFX
+(use-package sound-wav
+  :config
+  (when (equal system-type 'darwin)
+    (setq emu-sfx-list
+          '("prompt"
+            "checkmark"
+            "ending"
+            "fyi"
+            "result"
+            "triumph"
+            "uh-oh"
+            "flup"
+            "flown"
+            "fluown"))
+
+    (defun emu-play-sfx (name)
+      "Plays the sound effect NAME"
+      ;; (message (concat "playing sfx: " name))
+      (interactive (list (completing-read "Play which SFX? " emu-sfx-list)))
+      (sound-wav-play (concat "~/sfx/" name ".wav")))
+
+    (defun emu-random-choice (items)
+      (let* ((size (length items))
+             (index (random size)))
+        (nth index items)))
+
+    (defun emu-play-random-sfx ()
+      "Play a random sound effect"
+      (let ((choice (random-choice emu-sfx-list)))
+        (emu-play-sfx choice)
+        choice))
+
+     ;; (emu-play-random-sfx)
+
+    (advice-add 'emu-save-buffer :after (lambda (&optional arg) (emu-play-sfx "checkmark")))
+    (advice-add 'org-todo :after (lambda (&optional arg) (emu-play-sfx "flup")))
+    (advice-add 'y-or-n-p :before (lambda (&rest arg) (emu-play-sfx "prompt")))
+
+    (add-hook 'git-commit-post-finish-hook (lambda (&optional arg) (emu-play-sfx "ending")))
+    (add-hook 'compilation-finish-functions (lambda (buffer result)
+                                              (if (string= (s-trim result) "finished")
+                                                  (emu-play-sfx "result")
+                                                (emu-play-sfx "uh-oh"))))
+
+    (setq ring-bell-function (lambda ()
+    			  (emu-play-sfx "point")))
+
+    ;; (advice-add 'save-some-buffers :before (lambda (&rest arg) (emu-play-sfx "prompt")))
+
+    (emu-play-sfx "triumph")))
+
 ;;;*** Other
 (use-package exec-path-from-shell)
 
+(use-package command-log-mode)
+
 (use-package npm-mode)
 
-(use-package centered-cursor-mode)
+(use-package wgrep)
 
-;; (use-package sound-wav
-;;   :config
-;;   (setq ring-bell-function (lambda ()
-;;                              ;; (play-sound '(sound :file "~/.emacs.d/sound/bell.wav"))
-;;                              ;; (sound-wav-play  "~/.emacs.d/sound/bell.wav")
-;;                              )))
+(use-package centered-cursor-mode)
 
 (use-package auto-complete
   :config
@@ -642,7 +699,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
              "<tab>" 'emmet-expand-line))
 
 (use-package lua-mode
-  :bind ("C-SPC" . 'emu-run-src-in-love))
+  :bind (("C-SPC" . 'emu-run-src-in-love)
+         ("C-S-SPC" . 'emu-run-dir-in-love)))
 
 (use-package which-key
   :config
@@ -783,6 +841,8 @@ http://flatuicolors.com/palette/defo
 
 (setq-default fill-column 80)
 
+(fset 'yes-or-no-p 'y-or-n-p)
+
 (setq show-paren-delay 0)
 (setq show-paren-style 'parenthesis)
 (show-paren-mode)
@@ -821,7 +881,7 @@ http://flatuicolors.com/palette/defo
 
 ;; this replaces "yes or no" prompts with "y or n" prompts that only require a
 ;; single keystroke
-(fset 'yes-or-no-p 'y-or-n-p)
+;; (fset 'yes-or-no-p 'y-or-n-p) 
 
 ;; http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
 (defun emu-copy-file-name-to-clipboard ()
@@ -856,20 +916,6 @@ If in a project, copy the file path relative to the project root."
 ;; gross. just use git, ya silly dingus. for your health.
 (setq make-backup-files nil)
 (setq auto-save-default nil)
-
-;; by default, emacs rings the system bell a lot. when it makes sound,
-;; it gets really annoying really fast. this provides a custom
-;; function to "ring the bell." this quickly flashes the mode line as
-;; an inverted color.
-(setq ring-bell-function (lambda ()
-			   (invert-face 'mode-line)
-			   (run-with-timer 0.05 nil 'invert-face 'mode-line)))
-;; (setq ring-bell-function (lambda ()
-;; 			  (play-sound-file "~/.emacs.d/sound/bell.wav")))
-;; (setq ring-bell-function nil)
-;; (async-shell-command "say yo" nil)
-;; (async-shell-command "osascript -e beep")
-;; (ding)
 
 ;; a little encouragement while starting up emacs
 (setq dope-unicorn "
@@ -954,8 +1000,7 @@ If in a project, copy the file path relative to the project root."
   (define-key evil-normal-state-map (kbd "gk") 'outline-previous-heading)
   (define-key evil-normal-state-map (kbd "gj") 'outline-next-heading)
   (define-key evil-normal-state-map (kbd "M-k") 'outline-move-subtree-up)
-  (define-key evil-normal-state-map (kbd "M-j") 'outline-move-subtree-down)
-  (outline-hide-body))
+  (define-key evil-normal-state-map (kbd "M-j") 'outline-move-subtree-down))
 (add-hook 'emacs-lisp-mode-hook 'emu-emacs-lisp-mode-hook-func)
 
 (defun emu-display-line-numbers-mode-hook ()
@@ -988,10 +1033,10 @@ If in a project, copy the file path relative to the project root."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale counsel-projectile ag))))
+    (command-log-mode wgrep counsel-projectile counsel ivy csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:foreground "#2c3e50" :background "#ecf0f1")))))

@@ -107,6 +107,9 @@
   (setq org-html-validation-link nil)
   (setq org-export-html-postamble nil)
 
+  (setq org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
+
   (setq org-src-fontify-natively t)
 
   (setq org-export-headline-levels 6)
@@ -120,11 +123,13 @@
   ;; This logs the date/time TODO items are marked DONE
   (setq org-log-done t)
 
+  (setq org-log-note-clock-out t)
+
   (setq org-todo-keywords
         '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
 
   ;; This tells org-mode where my org files live
-  (setq org-agenda-files (list emu-org-path))
+  (setq org-agenda-files (list emu-org-path (concat emu-org-path "archive")))
 
   ;; This lets me refile across all my agenda files
   (setq org-refile-targets
@@ -147,8 +152,10 @@
   
 
   (setq org-capture-templates
-        `(("c" "Home task" entry (file+headline ,(concat emu-org-path "home.org") "projects") "* TODO %?\n  %i\n")
-          ("w" "Work task" entry (file+headline ,(concat emu-org-path "work.org") "Tasks") "* TODO %? %^g"))))
+        `(
+          ("c" "fleeting note" entry (file+headline ,(concat emu-org-path "ethanmuller.org") "fleeting notes") "** %?\n  %i\n")
+          ("l" "literature note" entry (file+headline ,(concat emu-org-path "ethanmuller.org") "literature notes") "** %?\n  %i\n")
+          )))
 
 
 (use-package evil-org
@@ -244,6 +251,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "s" '(:ignore t :which-key "shell stuff 🐌")
    "se" 'eshell
    "sa" 'async-shell-command
+   "ss" 'shell-command
 
    "f" '(:ignore t :which-key "files 🗄")
    "ff" 'counsel-find-file
@@ -253,9 +261,11 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "fc" 'emu-region-to-file
 
    "j" '(:ignore t :which-key "jump 🕴")
-   "ja" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/home.org"))) :which-key "home org")
-   "js" '((lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/work.org"))) :which-key "work org")
-   "jd" 'emu-open-config-file
+   "ja" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/ethanmuller.org")))
+   "js" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/notes.org")))
+   "jd" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/timesheet.org")))
+   "jw" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/sparkbox.org")))
+   "jf" 'emu-open-config-file
    ;;
    "jo" 'counsel-org-goto
    "jh" 'outline-up-heading
@@ -288,7 +298,10 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "os" 'org-schedule
    "o#" 'counsel-org-tag
    "oe" 'counsel-org-tag
+   "oo" 'org-open-at-point
+   "oq" 'counsel-org-tag
    "ow" 'org-save-all-org-buffers
+   "o$" 'org-archive-subtree
    "ot" '(lambda ()
            (interactive)
            (setq current-prefix-arg '(4)) ; C-u
@@ -415,8 +428,23 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; https://williambert.online/2015/11/How-I-made-Magit-fast-again/
   (setq magit-commit-show-diff nil)
 
+  (defun parse-url (url)
+    "convert a git remote location as a HTTP URL"
+    (if (string-match "^http" url)
+        url
+      (replace-regexp-in-string "\\(.*\\)@\\(.*\\):\\(.*\\)\\(\\.git?\\)"
+                                "https://\\2/\\3"
+                                url)))
+  (defun magit-open-repo ()
+    "open remote repo URL"
+    (interactive)
+    (let ((url (magit-get "remote" "origin" "url")))
+      (progn
+        (browse-url (parse-url url))
+        (message "opening repo %s" url))))
+
   ;; https://endlessparentheses.com/easily-create-github-prs-from-magit.html
-  (defun endless/visit-pull-request-url ()
+  (defun emu/visit-pull-request-url ()
     "Visit the current branch's PR on Github."
     (interactive)
     (browse-url
@@ -467,9 +495,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
 
-  ;; This removes default behavior to only match the beginning of strings
-  (setq ivy-initial-inputs-alist nil)
-
   (setq ivy-height 20)
 
   ;; Nice-looking numbers
@@ -480,6 +505,10 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :pin melpa-stable
   :diminish ""
   :config
+
+  ;; This removes default behavior to only match the beginning of strings
+  (setq ivy-initial-inputs-alist nil)
+
   (counsel-mode 1))
 
 (use-package projectile
@@ -519,6 +548,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   )
 
 ;;;*** Filetypes
+(use-package swift-mode)
+
 (use-package json-mode
   ;; This is used mostly for syntax highlighting on JSON files. It also
   ;; provides functions for working with JSON, but I'll probably never
@@ -532,6 +563,15 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 (use-package js2-mode
   :pin melpa-stable)
 
+(use-package rjsx-mode
+  :pin melpa-stable
+  :mode ("\\.js\\'"))
+
+(defun emu-run-file-in-pico8 ()
+  (interactive)
+  (save-some-buffers)
+  (async-shell-command (concat "/Applications/PICO-8.app/Contents/MacOS/pico8 " (file-name-nondirectory (buffer-file-name)))))
+
 (defun emu-run-src-in-love ()
   (interactive)
   (projectile-with-default-dir (projectile-project-root)
@@ -544,9 +584,38 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
     (save-some-buffers)
     (shell-command "/Applications/love.app/Contents/MacOS/love .")))
 
+
+(setq async-shell-command-buffer 'new-buffer)
+
+(defun emu-say-line ()
+  "Say the current line in a low voice. Only on macOS."
+  (interactive)
+  (let* ((line (thing-at-point 'line t))
+         (command (concat "say -v Bruce -r 200 '[[pbas 25]]" line "'" )))
+    (async-shell-command command)))
+
+(defun emu-whisper-line ()
+  "Say the current line in a whisper voice. Only on macOS."
+  (interactive)
+  (let* ((line (thing-at-point 'line t))
+         (command (concat "say -v Whisper -r 100 '" line "'" )))
+    (async-shell-command command)))
+
+(defun emu-whisper-line-slowly ()
+  "Say the current line in a whisper voice, slowly. Only on macOS."
+  (interactive)
+  (let* ((line (thing-at-point 'line t))
+         (command (concat "say -v Whisper -r 30 '" line "'" )))
+    (async-shell-command command)))
+
 (use-package twig-mode)
 
 (use-package markdown-mode)
+
+(use-package grip-mode
+  :pin melpa-stable
+  :general (spc-leader-def
+             "pr" 'grip-mode))
 
 (use-package csharp-mode)
 
@@ -557,14 +626,14 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
 (use-package web-mode
   :pin melpa-stable
-  :mode ("\\.cshtml\\'" "\\.hbs\\'")
+  :mode ("\\.cshtml\\'" "\\.hbs\\'" "\\.svelte\\'")
   :config
   (setq web-mode-markup-indent-offset 2))
 
 ;;;*** SFX
 (use-package sound-wav
   :config
-  (when (equal system-type 'darwin)
+  (when nil
     (setq emu-sfx-list
           '("prompt"
             "checkmark"
@@ -581,7 +650,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
       "Plays the sound effect NAME"
       ;; (message (concat "playing sfx: " name))
       (interactive (list (completing-read "Play which SFX? " emu-sfx-list)))
-      (sound-wav-play (concat "~/sfx/" name ".wav")))
+      (sound-wav-play (concat "~/.emacs.d/sfx/" name ".wav")))
 
     (defun emu-random-choice (items)
       (let* ((size (length items))
@@ -614,20 +683,24 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
     (emu-play-sfx "triumph")))
 
 ;;;*** Other
+(use-package org-tree-slide
+  :pin melpa-stable
+  :config
+  (define-key org-tree-slide-mode-map (kbd "s-<left>") 'org-tree-slide-move-previous-tree)
+  (define-key org-tree-slide-mode-map (kbd "s-<right>") 'org-tree-slide-move-next-tree)
+  ;;;; this profile lets you focus on todos. interesting!
+  ;;(org-tree-slide-narrowing-control-profile)
+  (org-tree-slide-simple-profile))
 (use-package exec-path-from-shell)
-
 (use-package command-log-mode)
-
 (use-package npm-mode)
-
 (use-package wgrep)
-
 (use-package centered-cursor-mode)
 
-(use-package auto-complete
-  :config
-  (ac-config-default)
-  (global-auto-complete-mode t))
+;; (use-package auto-complete
+;;   :config
+;;   (ac-config-default)
+;;   (global-auto-complete-mode t))
 
 (use-package npm-mode
   :config
@@ -718,9 +791,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :config
   (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
 
-(use-package hl-line
- :config
-  (global-hl-line-mode))
+;; (use-package hl-line
+;;  :config
+;;   (global-hl-line-mode))
 
 (use-package default-text-scale
 
@@ -778,8 +851,8 @@ http://flatuicolors.com/palette/defo
                       :background bg-color)
   (set-face-attribute 'fringe nil
                       :background bg-color)
-  (set-face-attribute 'hl-line nil
-                      :background "#f3f8f8")
+  ;; (set-face-attribute 'hl-line nil
+  ;;                     :background "#f3f8f8")
   (set-face-attribute 'line-number nil
                       :height 0.7
                       :box `(:line-width 4 :color ,(get-flatui-color "clouds") :style nil)
@@ -1006,6 +1079,8 @@ If in a project, copy the file path relative to the project root."
 (defun emu-display-line-numbers-mode-hook ()
   (setq display-line-numbers 'visual))
 
+;; (setq display-line-numbers nil)
+
 (defun emu-toggle-line-numbers-type ()
   "toggle between absolute and visual line numbers."
   (interactive)
@@ -1021,8 +1096,8 @@ If in a project, copy the file path relative to the project root."
 
 ;; ;; by default, async-shell-command pops up an annoying window showing
 ;; ;; the output of the async command. this prevents that.
-;; (add-to-list 'display-buffer-alist
-             ;; (cons "\\*async shell command\\*.*" (cons #'display-buffer-no-window nil)))
+(add-to-list 'display-buffer-alist
+             (cons "\\*async shell command\\*.*" (cons #'display-buffer-no-window nil)))
 
 ;; https://github.com/bbatsov/projectile/issues/520
 (setq projectile-svn-command "find . -type f -not -iwholename '*.svn/*' -print0")
@@ -1033,7 +1108,7 @@ If in a project, copy the file path relative to the project root."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (command-log-mode wgrep counsel-projectile counsel ivy csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
+    (org-tree-slide docker swift-mode grip-mode command-log-mode wgrep counsel-projectile counsel ivy csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

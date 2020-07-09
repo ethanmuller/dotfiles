@@ -489,7 +489,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; more than Helm because it does less, and is less overwhelming.
   ;;
   ;; https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/
-  :pin melpa-stable
   :diminish ""
   :config
   (ivy-mode 1)
@@ -502,7 +501,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
 (use-package counsel
   ;; Counsel provides ivy-ified versions of common emacs commands
-  :pin melpa-stable
   :diminish ""
   :config
 
@@ -538,7 +536,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (setq counsel-projectile-switch-project-action 'dired))
 
 (use-package counsel-projectile
-  :pin melpa-stable
   :config
   (counsel-projectile-mode))
 
@@ -631,56 +628,55 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (setq web-mode-markup-indent-offset 2))
 
 ;;;*** SFX
-(use-package sound-wav
-  :config
-  (when nil
-    (setq emu-sfx-list
-          '("prompt"
-            "checkmark"
-            "ending"
-            "fyi"
-            "result"
-            "triumph"
-            "uh-oh"
-            "flup"
-            "flown"
-            "fluown"))
+;; (use-package sound-wav
+;;   :config
+;;   (when nil
+;;     (setq emu-sfx-list
+;;           '("prompt"
+;;             "checkmark"
+;;             "ending"
+;;             "fyi"
+;;             "result"
+;;             "triumph"
+;;             "uh-oh"
+;;             "flup"
+;;             "flown"
+;;             "fluown"))
 
-    (defun emu-play-sfx (name)
-      "Plays the sound effect NAME"
-      ;; (message (concat "playing sfx: " name))
-      (interactive (list (completing-read "Play which SFX? " emu-sfx-list)))
-      (sound-wav-play (concat "~/.emacs.d/sfx/" name ".wav")))
+;;     (defun emu-play-sfx (name)
+;;       "Plays the sound effect NAME"
+;;       ;; (message (concat "playing sfx: " name))
+;;       (interactive (list (completing-read "Play which SFX? " emu-sfx-list)))
+;;       (sound-wav-play (concat "~/.emacs.d/sfx/" name ".wav")))
 
-    (defun emu-random-choice (items)
-      (let* ((size (length items))
-             (index (random size)))
-        (nth index items)))
+;;     (defun emu-random-choice (items)
+;;       (let* ((size (length items))
+;;              (index (random size)))
+;;         (nth index items)))
 
-    (defun emu-play-random-sfx ()
-      "Play a random sound effect"
-      (let ((choice (random-choice emu-sfx-list)))
-        (emu-play-sfx choice)
-        choice))
+;;     (defun emu-play-random-sfx ()
+;;       "Play a random sound effect"
+;;       (let ((choice (random-choice emu-sfx-list)))
+;;         (emu-play-sfx choice)
+;;         choice))
 
-     ;; (emu-play-random-sfx)
+;;      ;; (emu-play-random-sfx)
 
-    (advice-add 'emu-save-buffer :after (lambda (&optional arg) (emu-play-sfx "checkmark")))
-    (advice-add 'org-todo :after (lambda (&optional arg) (emu-play-sfx "flup")))
-    (advice-add 'y-or-n-p :before (lambda (&rest arg) (emu-play-sfx "prompt")))
+;;     (advice-add 'emu-save-buffer :after (lambda (&optional arg) (emu-play-sfx "checkmark")))
+;;     (advice-add 'org-todo :after (lambda (&optional arg) (emu-play-sfx "flup")))
+;;     (advice-add 'y-or-n-p :before (lambda (&rest arg) (emu-play-sfx "prompt")))
 
-    (add-hook 'git-commit-post-finish-hook (lambda (&optional arg) (emu-play-sfx "ending")))
-    (add-hook 'compilation-finish-functions (lambda (buffer result)
-                                              (if (string= (s-trim result) "finished")
-                                                  (emu-play-sfx "result")
-                                                (emu-play-sfx "uh-oh"))))
+;;     (add-hook 'git-commit-post-finish-hook (lambda (&optional arg) (emu-play-sfx "ending")))
+;;     (add-hook 'compilation-finish-functions (lambda (buffer result)
+;;                                               (if (string= (s-trim result) "finished")
+;;                                                   (emu-play-sfx "result")
+;;                                                 (emu-play-sfx "uh-oh"))))
 
-    (setq ring-bell-function (lambda ()
-    			  (emu-play-sfx "point")))
+;;     (setq ring-bell-function (lambda ()))
 
-    ;; (advice-add 'save-some-buffers :before (lambda (&rest arg) (emu-play-sfx "prompt")))
+;;     ;; (advice-add 'save-some-buffers :before (lambda (&rest arg) (emu-play-sfx "prompt")))
 
-    (emu-play-sfx "triumph")))
+;;     (emu-play-sfx "triumph")))
 
 ;;;*** Other
 (use-package org-tree-slide
@@ -708,9 +704,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (spc-leader-def
     "n" (general-simulate-key "C-c n")))
 
-(use-package nvm
-  :config
-  (nvm-use "10.13.0"))
+;; (use-package nvm
+;;   :config
+;;   (nvm-use "10.13.0"))
 
 (use-package flycheck
   :config
@@ -890,7 +886,7 @@ http://flatuicolors.com/palette/defo
   ;; Nice colors!
   :config
   ;; Better font
-  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+  ;; (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
 
   ;; Change fringe size
   (set-fringe-mode '(10 . 10))
@@ -1108,7 +1104,7 @@ If in a project, copy the file path relative to the project root."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (org-tree-slide docker swift-mode grip-mode command-log-mode wgrep counsel-projectile counsel ivy csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
+    (counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

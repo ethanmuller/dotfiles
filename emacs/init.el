@@ -4,6 +4,12 @@
   (message "you're in Windows, nerd")
   )
 
+(defconst emu/wsl (not (null (string-match "Linux.*Microsoft" (shell-command-to-string "uname -a")))))
+
+(if emu/wsl
+    (progn
+      (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "wslview")))
+
 ;; Sets your shell to use cygwin's bash, if Emacs finds it's running
 ;; under Windows and c:\cygwin exists. Assumes that C:\cygwin\bin is
 ;; not already in your Windows Path (it generally should not be).
@@ -67,6 +73,9 @@
 
 (if (file-exists-p "~/Dropbox (Personal)/")
     (setq emu-dropbox-path "~/Dropbox (Personal)/"))
+
+(if emu/wsl
+    (setq emu-dropbox-path "/mnt/c/Users/ethan/Dropbox/"))
 
 (defvar emu-org-path (concat emu-dropbox-path "Documents/org/")
   "Variable containing the file path to my org files.")
@@ -211,17 +220,6 @@
 Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (interactive)
   (insert (shell-command-to-string "echo -n $(date +%B)")))
-
-(defun explorg-publish-region ()
-  "Publish region to ethanmuller.org"
-  (interactive)
-  (write-region (region-beginning) (region-end) "~/ethanmuller.org")
-  (explorg-deploy))
-
-(defun explorg-deploy ()
-  "Copy explorg file to the server"
-  (interactive)
-  (shell-command "scp ~/ethanmuller.org emu@142.93.79.128:~/explorg/ethanmuller.org"))
 
 (defun emu-open-config-file ()
   "Open the emacs config file."
@@ -547,6 +545,10 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 ;;;*** Filetypes
 (use-package swift-mode)
 
+(use-package lua-mode
+  :config
+  (setq lua-indent-level 2))
+
 (use-package json-mode
   ;; This is used mostly for syntax highlighting on JSON files. It also
   ;; provides functions for working with JSON, but I'll probably never
@@ -672,7 +674,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 ;;                                                   (emu-play-sfx "result")
 ;;                                                 (emu-play-sfx "uh-oh"))))
 
-;;     (setq ring-bell-function (lambda ()))
+    (setq ring-bell-function (lambda ()))
 
 ;;     ;; (advice-add 'save-some-buffers :before (lambda (&rest arg) (emu-play-sfx "prompt")))
 
@@ -825,7 +827,7 @@ http://flatuicolors.com/palette/defo
 ;; (use-package purp-theme
 ;;   :config
 ;;   ;; Better font
-;;   ;; (add-to-list 'default-frame-alist '(font . "Ubuntu:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+      ;; (add-to-list 'default-frame-alist '(font . "IBM Plex Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
 ;;   (setq my-font "Ubuntu Mono-14")
 
 ;;   (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-14"))
@@ -887,6 +889,7 @@ http://flatuicolors.com/palette/defo
   :config
   ;; Better font
   ;; (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+  (add-to-list 'default-frame-alist '(font . "IBM Plex Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
 
   ;; Change fringe size
   (set-fringe-mode '(10 . 10))
@@ -981,10 +984,16 @@ If in a project, copy the file path relative to the project root."
 (setq sentence-end-double-space nil
       echo-keystrokes 0.01)
 
-;; disable backups. without this, emacs poops out #backup_files# everywhere.
-;; gross. just use git, ya silly dingus. for your health.
-(setq make-backup-files nil)
-(setq auto-save-default nil)
+;; If you don’t want to clutter up your file tree with Emacs’ backup files, you
+;; can save them to the system’s “temp” directory:
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+;; emacs likes to make .#blahblah.txt files, which are symbolic links
+;; to some PID. This was causing issues with Gatsby, so I'm turning the feature off
+(setq create-lockfiles nil)
 
 ;; a little encouragement while starting up emacs
 (setq dope-unicorn "

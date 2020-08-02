@@ -110,10 +110,11 @@
   (setq org-log-note-clock-out t)
 
   (setq org-todo-keywords
-        '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
+        '((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
 
   ;; This tells org-mode where my org files live
-  (setq org-agenda-files (list emu-org-path (concat emu-org-path "archive")))
+  (setq org-agenda-files (list emu-org-path (concat emu-org-path "journal")))
+  (setq org-agenda-file-regexp "\\`[^.].*\\.org'\\|[0-9]+$")
 
   ;; This lets me refile across all my agenda files
   (setq org-refile-targets
@@ -124,7 +125,6 @@
   ;; https://emacs.stackexchange.com/questions/477/how-do-i-automatically-save-org-mode-buffers
   (add-hook 'org-agenda-mode-hook
           (lambda ()
-            (message "AGENDA MODE ENGAGED")
             (add-hook 'auto-save-hook 'org-save-all-org-buffers nil t)
             (auto-save-mode)))
 
@@ -135,7 +135,7 @@
   (setq org-archive-location (concat emu-org-path "archive/%s::"))
   
 
-  (defun org-journal-find-location ()
+  (defun emu-org-journal-find-location ()
     ;; Open today's journal, but specify a non-nil prefix argument in order to
     ;; inhibit inserting the heading; org-capture will insert the heading.
     (org-journal-new-entry t)
@@ -143,18 +143,15 @@
     ;; will add the new entry as a child entry.
     (goto-char (point-min)))
 
-  (setq org-capture-templates '(("j" "Journal entry" entry (function org-journal-find-location)
-                                 "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
-
   (setq org-capture-templates
         `(
-          ("c" "fleeting note" entry (file+headline ,(concat emu-org-path "ethanmuller.org") "fleeting notes")
-           "** %?\n  %i\n")
-;;(function org-journal-find-location)
-          ("j" "journal entry" entry (function org-journal-find-location)
-           "* %(format-time-string org-journal-time-format)%i%?")
+          ;; ("c" "fleeting note" entry (file+headline ,(concat emu-org-path "ethanmuller.org") "fleeting notes")
+          ;;  "** %?\n  %i\n")
+          ("c" "journal entry" entry (function emu-org-journal-find-location)
+           "* %i%?")
+          ("p" "journal entry, paste clipboard" entry (function emu-org-journal-find-location)
+           "* PASTE: %i%?\n%x")
           )))
-
 
 (use-package evil-org
   :after (org evil)
@@ -164,7 +161,14 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
-(use-package org-journal)
+(use-package org-journal
+  :config
+  (setq org-journal-time-format "%k:%M ")
+  (setq org-journal-file-format "%Y-%m-%d")
+  (setq org-journal-find-file 'find-file)
+  ;; (setq org-journal-enable-agenda-integration t)
+  ;; (setq org-journal-time-format "%I:%M ")
+  (setq org-journal-dir (concat emu-org-path "journal")))
 
 ;;;*** Functions
 
@@ -254,7 +258,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "js" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/notes.org")))
    "jd" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/timesheet.org")))
    "jw" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/sparkbox.org")))
-   "jj" '(lambda () (interactive) (org-journal-find-location))
+   "jj" '(lambda () (interactive) (emu-org-journal-find-location))
    "jf" 'emu-open-config-file
    ;;
    "jo" 'counsel-org-goto
@@ -292,10 +296,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "oq" 'counsel-org-tag
    "ow" 'org-save-all-org-buffers
    "o$" 'org-archive-subtree
-   "ot" '(lambda ()
-           (interactive)
-           (setq current-prefix-arg '(4)) ; C-u
-           (call-interactively 'org-todo))
+   "ot" (general-simulate-key "C-c C-t")
    "op"   'explorg-publish-region
 
    "v" '(:ignore t :which-key "view 👁")

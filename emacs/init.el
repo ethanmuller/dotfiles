@@ -10,31 +10,6 @@
     (progn
       (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "wslview")))
 
-;; Sets your shell to use cygwin's bash, if Emacs finds it's running
-;; under Windows and c:\cygwin exists. Assumes that C:\cygwin\bin is
-;; not already in your Windows Path (it generally should not be).
-;;
-(let* ((cygwin-root "c:/cygwin")
-       (cygwin-bin (concat cygwin-root "/bin")))
-  (when (and (eq 'windows-nt system-type)
-             (file-readable-p cygwin-root))
-
-    (setq exec-path (cons cygwin-bin exec-path))
-    (setenv "PATH" (concat cygwin-bin ";" (getenv "PATH")))
-
-    ;; By default use the Windows HOME.
-    ;; Otherwise, uncomment below to set a HOME
-    ;;      (setenv "HOME" (concat cygwin-root "/home/eric"))
-
-    ;; NT-emacs assumes a Windows shell. Change to bash.
-    (setq shell-file-name "bash")
-    (setenv "SHELL" shell-file-name) 
-    (setq explicit-shell-file-name shell-file-name) 
-
-    ;; This removes unsightly ^M characters that would otherwise
-    ;; appear in the output of java applications.
-    (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)))
-
 (when (equal system-type 'darwin)
   (message "you're in macOS, hipster")
   (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
@@ -160,10 +135,24 @@
   (setq org-archive-location (concat emu-org-path "archive/%s::"))
   
 
+  (defun org-journal-find-location ()
+    ;; Open today's journal, but specify a non-nil prefix argument in order to
+    ;; inhibit inserting the heading; org-capture will insert the heading.
+    (org-journal-new-entry t)
+    ;; Position point on the journal's top-level heading so that org-capture
+    ;; will add the new entry as a child entry.
+    (goto-char (point-min)))
+
+  (setq org-capture-templates '(("j" "Journal entry" entry (function org-journal-find-location)
+                                 "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
+
   (setq org-capture-templates
         `(
-          ("c" "fleeting note" entry (file+headline ,(concat emu-org-path "ethanmuller.org") "fleeting notes") "** %?\n  %i\n")
-          ("l" "literature note" entry (file+headline ,(concat emu-org-path "ethanmuller.org") "literature notes") "** %?\n  %i\n")
+          ("c" "fleeting note" entry (file+headline ,(concat emu-org-path "ethanmuller.org") "fleeting notes")
+           "** %?\n  %i\n")
+;;(function org-journal-find-location)
+          ("j" "journal entry" entry (function org-journal-find-location)
+           "* %(format-time-string org-journal-time-format)%i%?")
           )))
 
 
@@ -174,6 +163,8 @@
   (evil-org-set-key-theme '(textobjects insert navigation additional shift todo agenda))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
+
+(use-package org-journal)
 
 ;;;*** Functions
 
@@ -263,12 +254,13 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "js" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/notes.org")))
    "jd" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/timesheet.org")))
    "jw" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/sparkbox.org")))
+   "jj" '(lambda () (interactive) (org-journal-find-location))
    "jf" 'emu-open-config-file
    ;;
    "jo" 'counsel-org-goto
-   "jh" 'outline-up-heading
-   "jj" 'outline-next-heading
-   "jk" 'outline-previous-heading
+   ;; "jh" 'outline-up-heading
+   ;; "jj" 'outline-next-heading
+   ;; "jk" 'outline-previous-heading
    ;;
    "jc" '(lambda () (interactive) (switch-to-buffer "*compilation*"))
    "jb" 'counsel-bookmark
@@ -706,9 +698,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (spc-leader-def
     "n" (general-simulate-key "C-c n")))
 
-;; (use-package nvm
-;;   :config
-;;   (nvm-use "10.13.0"))
+(use-package nvm
+  :config
+  (nvm-use "14.5.0"))
 
 (use-package flycheck
   :config
@@ -1113,7 +1105,7 @@ If in a project, copy the file path relative to the project root."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
+    (org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

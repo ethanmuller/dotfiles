@@ -162,6 +162,7 @@
   (evil-org-agenda-set-keys))
 
 (use-package org-journal
+  :pin melpa-stable
   :config
   (setq org-journal-time-format "%k:%M ")
   (setq org-journal-file-format "%Y-%m-%d")
@@ -169,6 +170,30 @@
   ;; (setq org-journal-enable-agenda-integration t)
   ;; (setq org-journal-time-format "%I:%M ")
   (setq org-journal-dir (concat emu-org-path "journal")))
+
+(use-package org-roam
+  :pin melpa-stable
+  :hook
+  (after-init . org-roam-mode)
+  :config
+  (spc-leader-def
+    "rr" 'org-roam
+    "rf" 'org-roam-find-file
+    "rc" 'org-roam-capture
+    "ir" 'org-roam-insert
+    "iR" 'org-roam-insert-immediate)
+  (setq org-roam-directory (concat emu-org-path "roam")))
+
+(use-package deft
+  :after org-roam
+  :config
+  (setq deft-recursive t)
+  (setq deft-use-filter-string-for-filename t)
+  (setq deft-default-extension "org")
+  (setq deft-directory org-roam-directory)
+  (evil-set-initial-state 'deft-mode 'emacs)
+  (spc-leader-def
+    "rd" 'deft))
 
 ;;;*** Functions
 
@@ -260,6 +285,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "jw" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/sparkbox.org")))
    "jj" '(lambda () (interactive) (emu-org-journal-find-location))
    "jf" 'emu-open-config-file
+   "jn" 'org-next-link
+   "jp" 'org-previous-link
    ;;
    "jo" 'counsel-org-goto
    ;; "jh" 'outline-up-heading
@@ -302,6 +329,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "v" '(:ignore t :which-key "view 👁")
    "vt" 'toggle-truncate-lines
    "vl" 'emu-toggle-line-numbers-type
+   "vL" 'emu-no-line-numbers
    "vj" 'recenter
    "vc" 'centered-cursor-mode
    "vz" '((lambda () (interactive) (text-scale-adjust 0.5)) :which-key "adjust font size")
@@ -701,7 +729,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 
 (use-package nvm
   :config
-  (nvm-use "14.5.0"))
+  (nvm-use "14.6.0"))
 
 (use-package flycheck
   :config
@@ -805,6 +833,13 @@ http://flatuicolors.com/palette/defo
 "
   (cdr (assoc c flatui-colors-alist)))
 
+(defun set-bigger-spacing ()
+  (interactive)
+  (setq-local default-text-properties '(line-spacing 0.25 line-height 1.25)))
+(add-hook 'text-mode-hook 'set-bigger-spacing)
+(add-hook 'prog-mode-hook 'set-bigger-spacing)
+(add-hook 'magit-status-mode-hook 'set-bigger-spacing)
+
 ;;;*** Faces
 ;; (use-package lab-themes
 ;;   :config
@@ -839,13 +874,14 @@ http://flatuicolors.com/palette/defo
                       :foreground (get-flatui-color "wet-asphalt")
                       :weight 'bold)
   (set-face-attribute 'default nil
+                      ;; :height 0.7
                       :background bg-color)
   (set-face-attribute 'fringe nil
                       :background bg-color)
   ;; (set-face-attribute 'hl-line nil
   ;;                     :background "#f3f8f8")
   (set-face-attribute 'line-number nil
-                      :height 0.7
+                      ;; :height 0.7
                       :box `(:line-width 4 :color ,(get-flatui-color "clouds") :style nil)
                       :foreground (get-flatui-color "concrete"))
   ;; (set-face-attribute 'line-number-current-line nil
@@ -1077,7 +1113,10 @@ If in a project, copy the file path relative to the project root."
 (defun emu-display-line-numbers-mode-hook ()
   (setq display-line-numbers 'visual))
 
-;; (setq display-line-numbers nil)
+(defun emu-no-line-numbers ()
+  "toggle between absolute and visual line numbers."
+  (interactive)
+  (setq display-line-numbers nil))
 
 (defun emu-toggle-line-numbers-type ()
   "toggle between absolute and visual line numbers."
@@ -1085,8 +1124,9 @@ If in a project, copy the file path relative to the project root."
   (if (eq display-line-numbers 'visual)
       (setq display-line-numbers t)
     (setq display-line-numbers 'visual)))
-(add-hook 'display-line-numbers-mode-hook 'emu-display-line-numbers-mode-hook)
-(global-display-line-numbers-mode)
+;; (add-hook 'display-line-numbers-mode-hook 'emu-display-line-numbers-mode-hook)
+(add-hook 'text-mode-hook 'emu-display-line-numbers-mode-hook)
+(add-hook 'prog-mode-hook 'emu-display-line-numbers-mode-hook)
 
 ;; prevent "ls does not support --dired" message
 (when (string= system-type "darwin")
@@ -1104,6 +1144,13 @@ If in a project, copy the file path relative to the project root."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-link-frame-setup
+   (quote
+    ((vm . vm-visit-folder)
+     (vm-imap . vm-visit-imap-folder)
+     (gnus . gnus)
+     (file . find-file)
+     (wl . wl))))
  '(package-selected-packages
    (quote
     (org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))

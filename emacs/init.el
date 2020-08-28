@@ -113,8 +113,8 @@
         '((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
 
   ;; This tells org-mode where my org files live
-  (setq org-agenda-files (list emu-org-path (concat emu-org-path "journal")))
-  (setq org-agenda-file-regexp "\\`[^.].*\\.org'\\|[0-9]+$")
+  ;; (setq org-agenda-files (concat emu-org-path "ethanmuller.org"))
+  ;; (setq org-agenda-file-regexp "\\`[^.].*\\.org'\\|[0-9]+$")
 
   ;; This lets me refile across all my agenda files
   (setq org-refile-targets
@@ -283,7 +283,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "js" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/notes.org")))
    "jd" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/timesheet.org")))
    "jw" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/sparkbox.org")))
-   "jj" '(lambda () (interactive) (emu-org-journal-find-location))
+   "jh" '(lambda () (interactive) (org-roam-dailies-yesterday 1))
+   "jj" '(lambda () (interactive) (org-roam-dailies-today))
+   "jk" '(lambda () (interactive) (org-roam-dailies-tomorrow 1))
    "jf" 'emu-open-config-file
    "jn" 'org-next-link
    "jp" 'org-previous-link
@@ -325,6 +327,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "o$" 'org-archive-subtree
    "ot" (general-simulate-key "C-c C-t")
    "op"   'explorg-publish-region
+   "ol"  'org-store-link
 
    "v" '(:ignore t :which-key "view 👁")
    "vt" 'toggle-truncate-lines
@@ -563,7 +566,18 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;; it's useful to have your most recently used stuff at the top!
   )
 
+;;;*** YASnippet
+(use-package yasnippet
+  :init
+  (yas-global-mode 1))
+(use-package yasnippet-snippets)
+(use-package ivy-yasnippet
+  :config
+  (spc-leader-def
+    "is" 'ivy-yasnippet))
+
 ;;;*** Filetypes
+(use-package python-mode)
 (use-package swift-mode)
 
 (use-package lua-mode
@@ -790,9 +804,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :general (spc-leader-def
              "<tab>" 'emmet-expand-line))
 
-(use-package lua-mode
-  :bind (("C-SPC" . 'emu-run-src-in-love)
-         ("C-S-SPC" . 'emu-run-dir-in-love)))
+(use-package lua-mode)
 
 (use-package which-key
   :config
@@ -1085,7 +1097,6 @@ If in a project, copy the file path relative to the project root."
 (add-hook 'dired-mode-hook 'emu-dired-mode-hook-func)
 
 (defun emu-wdired-mode-hook-func ()
-  (message "yo")
   (spc-leader-def
     "br" 'wdired-exit)
   )
@@ -1144,16 +1155,12 @@ If in a project, copy the file path relative to the project root."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-link-frame-setup
+ '(org-agenda-files
    (quote
-    ((vm . vm-visit-folder)
-     (vm-imap . vm-visit-imap-folder)
-     (gnus . gnus)
-     (file . find-file)
-     (wl . wl))))
+    ("/mnt/c/Users/ethan/Dropbox/documents/org/ethanmuller.org")))
  '(package-selected-packages
    (quote
-    (org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
+    (yasnippet-snippets ivy-yasnippet yasnippet deft org-roam org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

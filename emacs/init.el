@@ -241,6 +241,18 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (interactive)
   (insert (shell-command-to-string "echo -n $(date +%B)")))
 
+(defun emu-delete-file-and-buffer ()
+  "Kill the current buffer and deletes the file it is visiting."
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (if filename
+        (if (y-or-n-p (concat "Do you really want to delete file " filename " ?"))
+            (progn
+              (delete-file filename)
+              (message "Deleted file %s." filename)
+              (kill-buffer)))
+      (message "Not a file visiting buffer!"))))
+
 (defun emu-open-config-file ()
   "Open the emacs config file."
   (interactive)
@@ -277,6 +289,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "fw" 'write-file
    "fr" 'counsel-recentf
    "fc" 'emu-region-to-file
+   "fd" 'emu-delete-file-and-buffer
 
    "j" '(:ignore t :which-key "jump 🕴")
    "ja" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/ethanmuller.org")))
@@ -716,6 +729,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 ;;     (emu-play-sfx "triumph")))
 
 ;;;*** Other
+
+;; (use-package mu4e)
+
 (use-package org-tree-slide
   :pin melpa-stable
   :config
@@ -1160,7 +1176,7 @@ If in a project, copy the file path relative to the project root."
     ("/mnt/c/Users/ethan/Dropbox/documents/org/ethanmuller.org")))
  '(package-selected-packages
    (quote
-    (yasnippet-snippets ivy-yasnippet yasnippet deft org-roam org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
+    (mu4e yasnippet-snippets ivy-yasnippet yasnippet deft org-roam org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

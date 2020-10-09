@@ -49,6 +49,9 @@
 (if (file-exists-p "~/Dropbox (Personal)/")
     (setq emu-dropbox-path "~/Dropbox (Personal)/"))
 
+(if (file-exists-p "~/Dropbox/")
+    (setq emu-dropbox-path "~/Dropbox/"))
+
 (if emu/wsl
     (setq emu-dropbox-path "/mnt/c/Users/ethan/Dropbox/"))
 
@@ -181,7 +184,12 @@
     "rf" 'org-roam-find-file
     "rc" 'org-roam-capture
     "ir" 'org-roam-insert
-    "iR" 'org-roam-insert-immediate)
+    "iR" 'org-roam-insert-immediate
+    "rh" '(lambda () (interactive) (org-roam-dailies-yesterday 1))
+    "rj" '(lambda () (interactive) (org-roam-dailies-today))
+    "rk" '(lambda () (interactive) (org-roam-dailies-tomorrow 1))
+    "rd" '(lambda () (interactive) (org-roam-dailies-date))
+    )
   (setq org-roam-directory (concat emu-org-path "roam")))
 
 (use-package deft
@@ -193,7 +201,7 @@
   (setq deft-directory org-roam-directory)
   (evil-set-initial-state 'deft-mode 'emacs)
   (spc-leader-def
-    "rd" 'deft))
+    "r/" 'deft))
 
 ;;;*** Functions
 
@@ -296,9 +304,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
    "js" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/notes.org")))
    "jd" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/timesheet.org")))
    "jw" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/sparkbox.org")))
-   "jh" '(lambda () (interactive) (org-roam-dailies-yesterday 1))
-   "jj" '(lambda () (interactive) (org-roam-dailies-today))
-   "jk" '(lambda () (interactive) (org-roam-dailies-tomorrow 1))
    "jf" 'emu-open-config-file
    "jn" 'org-next-link
    "jp" 'org-previous-link
@@ -623,7 +628,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (interactive)
   (projectile-with-default-dir (projectile-project-root)
     (save-some-buffers)
-    (shell-command "/Applications/love.app/Contents/MacOS/love src")))
+    (shell-command "love src")))
+(spc-leader-def
+  "ll" 'emu-run-src-in-love)
 
 (defun emu-run-dir-in-love ()
   (interactive)
@@ -757,9 +764,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (spc-leader-def
     "n" (general-simulate-key "C-c n")))
 
-(use-package nvm
-  :config
-  (nvm-use "14.6.0"))
+;; (use-package nvm
+;;   :config
+;;   (nvm-use "14.6.0"))
 
 (use-package flycheck
   :config
@@ -869,6 +876,7 @@ http://flatuicolors.com/palette/defo
 (add-hook 'magit-status-mode-hook 'set-bigger-spacing)
 
 ;;;*** Faces
+(menu-bar-mode 0)
 ;; (use-package lab-themes
 ;;   :config
 ;;   (lab-themes-load-style 'dark)
@@ -1183,3 +1191,4 @@ If in a project, copy the file path relative to the project root."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:foreground "#2c3e50" :background "#ecf0f1")))))
+

@@ -58,6 +58,9 @@
 (defvar emu-org-path (concat emu-dropbox-path "Documents/org/")
   "Variable containing the file path to my org files.")
 
+(defvar emu-roam-path (concat emu-org-path "roam")
+  "Variable containing the file path to my org-roam files.")
+
 (defun emu-region-to-file (begin end)
   "Move region to a file"
   (interactive "r")
@@ -71,6 +74,101 @@
   (org-mode))
 
 ;;;** Packages & package config
+;;;*** General
+(use-package general
+  :config
+  (general-evil-setup)
+  (general-create-definer spc-leader-def
+    :states '(normal visual insert motion emacs)
+    :keymaps 'override
+    :prefix "SPC"
+    :non-normal-prefix "C-SPC")
+  (spc-leader-def
+   "d"   'dired
+
+   "x"   'counsel-M-x
+
+   "g"   'magit-status
+
+   "i" '(:ignore t :which-key "insert ⚡")
+   "id" 'emu-insert-date
+   "im" 'emu-insert-month-name
+   "il" 'org-insert-link
+
+   "s" '(:ignore t :which-key "shell stuff 🐌")
+   "se" 'eshell
+   "sa" 'async-shell-command
+   "ss" 'shell-command
+
+   "f" '(:ignore t :which-key "files 🗄")
+   "ff" 'counsel-find-file
+   "fs" 'emu-save-buffer
+   "fw" 'write-file
+   "fr" 'counsel-recentf
+   "fc" 'emu-region-to-file
+   "fd" 'emu-delete-file-and-buffer
+
+   "j" '(:ignore t :which-key "jump 🕴")
+   "jf" 'emu-open-config-file
+   "jn" 'org-next-link
+   "jp" 'org-previous-link
+   ;;
+   "jo" 'counsel-org-goto
+   ;; "jh" 'outline-up-heading
+   ;; "jj" 'outline-next-heading
+   ;; "jk" 'outline-previous-heading
+   ;;
+   "jc" '(lambda () (interactive) (switch-to-buffer "*compilation*"))
+   "jb" 'counsel-bookmark
+
+   "e" '(:ignore t :which-key "edit ✏")
+   "ec"   'emu-copy-file-name-to-clipboard
+   "ed"   'delete-blank-lines
+
+   "y" '(:ignore t :which-key "clipboard")
+   "yf"   'emu-copy-file-name-to-clipboard
+
+   "b" '(:ignore t :which-key "buffers 🖹")
+   "bs" 'ivy-switch-buffer
+   "SPC" 'evil-buffer
+   "bk" 'kill-buffer
+   "bN" 'emu-new-buffer
+   "bn" 'next-buffer
+   "bp" 'previous-buffer
+   "bb" 'evil-buffer
+   "be" 'emu-open-config-file
+   ;; "bb" 'counsel-bookmark
+
+   "oa" 'org-agenda
+   "oc" 'org-capture
+   "os" 'org-schedule
+   "o#" 'counsel-org-tag
+   "oe" 'counsel-org-tag
+   "oo" 'org-open-at-point
+   "oq" 'counsel-org-tag
+   "ow" 'org-save-all-org-buffers
+   "o$" 'org-archive-subtree
+   "ot" (general-simulate-key "C-c C-t")
+   "op"   'explorg-publish-region
+   "ol"  'org-store-link
+   "o*" 'org-list-make-subtree
+
+   "v" '(:ignore t :which-key "view 👁")
+   "vt" 'toggle-truncate-lines
+   "vl" 'emu-toggle-line-numbers-type
+   "vL" 'emu-no-line-numbers
+   "vj" 'recenter
+   "vc" 'centered-cursor-mode
+   "vz" '((lambda () (interactive) (text-scale-adjust 0.5)) :which-key "adjust font size")
+   "vf" 'make-frame
+   "vn" 'other-frame
+   "vx" 'delete-frame
+
+   "h" 'help-command
+
+   "c" 'org-capture
+
+   ))
 ;;;*** Org
 (use-package ox-gfm)
 
@@ -113,11 +211,14 @@
   (setq org-log-note-clock-out t)
 
   (setq org-todo-keywords
-        '((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
+        '((sequence "TODO" "IN-PROGRESS" "|" "DONE" "CANCELLED")))
 
-  ;; This tells org-mode where my org files live
-  ;; (setq org-agenda-files (concat emu-org-path "ethanmuller.org"))
-  ;; (setq org-agenda-file-regexp "\\`[^.].*\\.org'\\|[0-9]+$")
+  ;; This tells org-agenda where my agenda files live
+  ;;(setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
+  ;; (add-to-list 'org-agenda-files emu-roam-path)
+  ;; (setq org-agenda-files '())
+  ;; (add-to-list org-agenda-files emu-roam-path)
+  (setq org-journal-enable-agenda-integration t)
 
   ;; This lets me refile across all my agenda files
   (setq org-refile-targets
@@ -135,26 +236,7 @@
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
   ;; (setq org-archive-location "~/data/org/archive/%s::")
-  (setq org-archive-location (concat emu-org-path "archive/%s::"))
-  
-
-  (defun emu-org-journal-find-location ()
-    ;; Open today's journal, but specify a non-nil prefix argument in order to
-    ;; inhibit inserting the heading; org-capture will insert the heading.
-    (org-journal-new-entry t)
-    ;; Position point on the journal's top-level heading so that org-capture
-    ;; will add the new entry as a child entry.
-    (goto-char (point-min)))
-
-  (setq org-capture-templates
-        `(
-          ;; ("c" "fleeting note" entry (file+headline ,(concat emu-org-path "ethanmuller.org") "fleeting notes")
-          ;;  "** %?\n  %i\n")
-          ("c" "journal entry" entry (function emu-org-journal-find-location)
-           "* %i%?")
-          ("p" "journal entry, paste clipboard" entry (function emu-org-journal-find-location)
-           "* PASTE: %i%?\n%x")
-          )))
+  (setq org-archive-location (concat emu-org-path "archive/%s::")))
 
 (use-package evil-org
   :after (org evil)
@@ -167,12 +249,27 @@
 (use-package org-journal
   :pin melpa-stable
   :config
-  (setq org-journal-time-format "%k:%M ")
-  (setq org-journal-file-format "%Y-%m-%d")
+  (spc-leader-def
+    "jj" 'org-journal-open-current-journal-file
+    "oj" 'org-journal-open-current-journal-file)
+  (setq org-journal-file-type 'weekly)
+  (setq org-journal-time-format "")
+  (setq org-journal-file-format "%Y-%m-%d.org")
   (setq org-journal-find-file 'find-file)
   ;; (setq org-journal-enable-agenda-integration t)
   ;; (setq org-journal-time-format "%I:%M ")
-  (setq org-journal-dir (concat emu-org-path "journal")))
+  (setq org-journal-dir emu-roam-path)
+
+  (defun org-journal-find-location ()
+    ;; Open today's journal, but specify a non-nil prefix argument in order to
+    ;; inhibit inserting the heading; org-capture will insert the heading.
+    (org-journal-new-entry t)
+    (unless (eq org-journal-file-type 'daily)
+      (org-narrow-to-subtree))
+    (goto-char (point-max)))
+
+  (setq org-capture-templates '(("j" "Journal entry" plain (function org-journal-find-location)
+                                 "** %(format-time-string org-journal-time-format) %i%?"))))
 
 (use-package org-roam
   :pin melpa-stable
@@ -185,23 +282,19 @@
     "rc" 'org-roam-capture
     "ir" 'org-roam-insert
     "iR" 'org-roam-insert-immediate
-    "rh" '(lambda () (interactive) (org-roam-dailies-yesterday 1))
-    "rj" '(lambda () (interactive) (org-roam-dailies-today))
-    "rk" '(lambda () (interactive) (org-roam-dailies-tomorrow 1))
-    "rd" '(lambda () (interactive) (org-roam-dailies-date))
     )
-  (setq org-roam-directory (concat emu-org-path "roam")))
+  (setq org-roam-directory emu-roam-path))
 
-(use-package deft
-  :after org-roam
-  :config
-  (setq deft-recursive t)
-  (setq deft-use-filter-string-for-filename t)
-  (setq deft-default-extension "org")
-  (setq deft-directory org-roam-directory)
-  (evil-set-initial-state 'deft-mode 'emacs)
-  (spc-leader-def
-    "r/" 'deft))
+;; (use-package deft
+;;   :after org-roam
+;;   :config
+;;   (setq deft-recursive t)
+;;   (setq deft-use-filter-string-for-filename t)
+;;   (setq deft-default-extension "org")
+;;   (setq deft-directory org-roam-directory)
+;;   (evil-set-initial-state 'deft-mode 'emacs)
+;;   (spc-leader-def
+;;     "r/" 'deft))
 
 ;;;*** Functions
 
@@ -265,101 +358,6 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   "Open the emacs config file."
   (interactive)
   (find-file user-init-file))
-;;;*** General
-(use-package general
-  :config
-  (general-evil-setup)
-  (general-create-definer spc-leader-def
-    :states '(normal visual insert motion emacs)
-    :keymaps 'override
-    :prefix "SPC"
-    :non-normal-prefix "C-SPC")
-  (spc-leader-def
-   "d"   'dired
-
-   "x"   'counsel-M-x
-
-   "g"   'magit-status
-
-   "i" '(:ignore t :which-key "insert ⚡")
-   "id" 'emu-insert-date
-   "im" 'emu-insert-month-name
-   "il" 'org-insert-link
-
-   "s" '(:ignore t :which-key "shell stuff 🐌")
-   "se" 'eshell
-   "sa" 'async-shell-command
-   "ss" 'shell-command
-
-   "f" '(:ignore t :which-key "files 🗄")
-   "ff" 'counsel-find-file
-   "fs" 'emu-save-buffer
-   "fw" 'write-file
-   "fr" 'counsel-recentf
-   "fc" 'emu-region-to-file
-   "fd" 'emu-delete-file-and-buffer
-
-   "j" '(:ignore t :which-key "jump 🕴")
-   "ja" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/ethanmuller.org")))
-   "js" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/notes.org")))
-   "jd" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/timesheet.org")))
-   "jw" '(lambda () (interactive) (find-file (concat emu-dropbox-path "documents/org/sparkbox.org")))
-   "jf" 'emu-open-config-file
-   "jn" 'org-next-link
-   "jp" 'org-previous-link
-   ;;
-   "jo" 'counsel-org-goto
-   ;; "jh" 'outline-up-heading
-   ;; "jj" 'outline-next-heading
-   ;; "jk" 'outline-previous-heading
-   ;;
-   "jc" '(lambda () (interactive) (switch-to-buffer "*compilation*"))
-   "jb" 'counsel-bookmark
-
-   "e" '(:ignore t :which-key "edit ✏")
-   "ec"   'emu-copy-file-name-to-clipboard
-   "ed"   'delete-blank-lines
-
-   "y" '(:ignore t :which-key "clipboard")
-   "yf"   'emu-copy-file-name-to-clipboard
-
-   "b" '(:ignore t :which-key "buffers 🖹")
-   "bs" 'ivy-switch-buffer
-   "SPC" 'evil-buffer
-   "bk" 'kill-buffer
-   "bN" 'emu-new-buffer
-   "bn" 'next-buffer
-   "bp" 'previous-buffer
-   "bb" 'evil-buffer
-   "be" 'emu-open-config-file
-   ;; "bb" 'counsel-bookmark
-
-   "oa" 'org-agenda
-   "oc" 'org-capture
-   "os" 'org-schedule
-   "o#" 'counsel-org-tag
-   "oe" 'counsel-org-tag
-   "oo" 'org-open-at-point
-   "oq" 'counsel-org-tag
-   "ow" 'org-save-all-org-buffers
-   "o$" 'org-archive-subtree
-   "ot" (general-simulate-key "C-c C-t")
-   "op"   'explorg-publish-region
-   "ol"  'org-store-link
-
-   "v" '(:ignore t :which-key "view 👁")
-   "vt" 'toggle-truncate-lines
-   "vl" 'emu-toggle-line-numbers-type
-   "vL" 'emu-no-line-numbers
-   "vj" 'recenter
-   "vc" 'centered-cursor-mode
-   "vz" '((lambda () (interactive) (text-scale-adjust 0.5)) :which-key "adjust font size")
-
-   "h" 'help-command
-
-   "c" 'org-capture
-
-   ))
 ;;;*** Evil
 (use-package evil
   ;; Evil mode is what makes emacs worth using. <3
@@ -559,7 +557,8 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
             "ps" 'counsel-projectile-ag
             "pc" 'projectile-compile-project
             "pd" 'projectile-dired
-            "pk" 'projectile-add-known-project)
+            "pk" 'projectile-add-known-project
+            "a" 'recompile)
 
   :config
   (projectile-global-mode)
@@ -598,6 +597,30 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
 (use-package python-mode)
 (use-package swift-mode)
 
+(use-package company
+  :config
+  (company-mode))
+
+;; (use-package typescript-mode)
+
+;; (use-package tide
+;;   :after (typescript-mode company flycheck)
+;;   :hook ((typescript-mode . tide-setup)
+;;          (typescript-mode . tide-hl-identifier-mode)
+;;          (before-save . tide-format-before-save)))
+
+(use-package vue-mode
+  :config
+  (add-hook 'mmm-mode-hook
+            (lambda ()
+              (set-face-background 'mmm-default-submode-face "#ffffff"))))
+
+(use-package prettier-js
+  :config
+  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  (add-hook 'web-mode-hook 'prettier-js-mode)
+  (add-hook 'vue-mode-hook 'prettier-js-mode))
+
 (use-package lua-mode
   :config
   (setq lua-indent-level 2))
@@ -629,6 +652,7 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   (projectile-with-default-dir (projectile-project-root)
     (save-some-buffers)
     (shell-command "love src")))
+
 (spc-leader-def
   "ll" 'emu-run-src-in-love)
 
@@ -747,7 +771,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   ;;;; this profile lets you focus on todos. interesting!
   ;;(org-tree-slide-narrowing-control-profile)
   (org-tree-slide-simple-profile))
-(use-package exec-path-from-shell)
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
 (use-package command-log-mode)
 (use-package npm-mode)
 (use-package wgrep)
@@ -1181,10 +1207,10 @@ If in a project, copy the file path relative to the project root."
  ;; If there is more than one, they won't work right.
  '(org-agenda-files
    (quote
-    ("/mnt/c/Users/ethan/Dropbox/documents/org/ethanmuller.org")))
+    ("/home/emu/Dropbox/Documents/org/roam/2020-11-23.org")))
  '(package-selected-packages
    (quote
-    (mu4e yasnippet-snippets ivy-yasnippet yasnippet deft org-roam org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
+    (tide company company-mode typescript-mode prettier-js vue-mode mu4e yasnippet-snippets ivy-yasnippet yasnippet deft org-roam org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

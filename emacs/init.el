@@ -269,7 +269,9 @@
     (goto-char (point-max)))
 
   (setq org-capture-templates '(("j" "Journal entry" plain (function org-journal-find-location)
-                                 "** %(format-time-string org-journal-time-format) %i%?"))))
+                                 "** %i%?")
+                                ("t" "TODO entry, scheduled for today" plain (function org-journal-find-location)
+                                 "** TODO %i%?\nSCHEDULED: <%<%Y-%m-%d %a>>"))))
 
 (use-package org-roam
   :pin melpa-stable
@@ -636,7 +638,9 @@ Stolen from here: https://www.emacswiki.org/emacs/InsertingTodaysDate"
   :pin melpa-stable)
 
 (use-package js2-mode
-  :pin melpa-stable)
+  :pin melpa-stable
+  (setq js2-mode-show-parse-errors nil)
+  (setq js2-mode-show-strict-warnings nil))
 
 (use-package rjsx-mode
   :pin melpa-stable
@@ -1207,7 +1211,7 @@ If in a project, copy the file path relative to the project root."
  ;; If there is more than one, they won't work right.
  '(org-agenda-files
    (quote
-    ("/home/emu/Dropbox/Documents/org/roam/2020-11-23.org")))
+    ("/home/emu/Dropbox/Documents/org/roam/2020-12-14.org")))
  '(package-selected-packages
    (quote
     (tide company company-mode typescript-mode prettier-js vue-mode mu4e yasnippet-snippets ivy-yasnippet yasnippet deft org-roam org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))

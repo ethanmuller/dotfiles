@@ -37,6 +37,8 @@
 
 (setq use-package-always-ensure t)
 
+(setq byte-compile-warnings '(cl-functions))
+
 (eval-when-compile
   (require 'use-package))
 
@@ -110,8 +112,8 @@
 
    "j" '(:ignore t :which-key "jump 🕴")
    "jf" 'emu-open-config-file
-   "jn" 'org-next-link
-   "jp" 'org-previous-link
+   ;; "jn" 'org-next-link
+   ;; "jp" 'org-previous-link
    ;;
    "jo" 'counsel-org-goto
    ;; "jh" 'outline-up-heading
@@ -169,30 +171,25 @@
    "c" 'org-capture
 
    ))
+
 ;;;*** Org
 (use-package org
   :config
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
-  (add-hook 'org-mode-hook 'org-indent-mode)
   (add-hook 'org-mode-hook 'visual-line-mode)
   (setq org-log-done t)
+  (setq org-archive-location "%s_archive.org::")
 
   (setq org-todo-keywords
         '((sequence "TODO" "IN-PROGRESS" "|" "DONE" "CANCELLED")))
 
-  ;; Do some automatic saving
-  ;; https://emacs.stackexchange.com/questions/477/how-do-i-automatically-save-org-mode-buffers
-  ;; (add-hook 'org-agenda-mode-hook
-  ;;         (lambda ()
-  ;;           (add-hook 'auto-save-hook 'org-save-all-org-buffers nil t)
-  ;;           (auto-save-mode)))
-
-  ;; Save after refile
-  ;; (advice-add 'org-refile :after 'org-save-all-org-buffers)
-
-  ;; (setq org-archive-location "~/data/org/archive/%s::")
-  ;; (setq org-archive-location (concat emu-org-path "archive/%s::"))
-  )
+  (setq org-default-notes-file (concat emu-roam-path "/20210129221621-life.org"))
+  (defun open-org-default-notes-file ()
+    (interactive)
+    (find-file org-default-notes-file))
+  (setq org-capture-templates '(
+                                ("j" "fleeting note" plain (file+headline org-default-notes-file "fleeting notes")  "** %i%?" :append t)
+                                ))
 
 (use-package evil-org
   :after (org evil)
@@ -202,63 +199,20 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
-(use-package org-journal
-  :pin melpa-stable
-  :init
-  (setq org-journal-prefix-key "C-c j ")
-  :config
-  (spc-leader-def
-    "jj" 'org-journal-open-current-journal-file
-    "oj" 'org-journal-open-current-journal-file)
-  ;; (setq org-journal-file-format "%Y-%m-%d.org")
-
-  (setq org-journal-dir emu-roam-path)
-
-
-  (defun org-journal-find-location ()
-    ;; Open today's journal, but specify a non-nil prefix argument in order to
-    ;; inhibit inserting the heading; org-capture will insert the heading.
-    ;;
-    ;; snippet from
-    ;; https://github.com/bastibe/org-journal#journal-capture-template
-    (org-journal-new-entry t)
-    (unless (eq org-journal-file-type 'daily)
-      (org-narrow-to-subtree))
-    (goto-char (point-max)))
-
-  (setq org-capture-templates '(("j" "fleeting note" plain (function org-journal-find-location)
-                                 "** %i%?")
-                                ("t" "TODO entry, scheduled for today" plain (function org-journal-find-location)
-                                 "** TODO %i%?\nSCHEDULED: <%<%Y-%m-%d %a>>")
-                                ("T" "TODO entry, unscheduled" plain (function org-journal-find-location)
-                                 "** TODO %i%?")
-                                ("p" "capture clipboard" plain (function org-journal-find-location)
-                                 "** %x %i%?"))))
-
+(use-package emacsql-sqlite3
+  :custom (emacsql-sqlite-executable-path "c:/Users/ethan/bin/sqlite3.exe"))
 (use-package org-roam
-  :pin melpa-stable
   :hook
   (after-init . org-roam-mode)
   :config
+  (setq org-roam-db-update-method 'immediate)
   (spc-leader-def
     "rr" 'org-roam
     "rf" 'org-roam-find-file
     "rc" 'org-roam-capture
     "ir" 'org-roam-insert
-    "iR" 'org-roam-insert-immediate
-    )
+    "iR" 'org-roam-insert-immediate)
   (setq org-roam-directory emu-roam-path))
-
-;; (use-package deft
-;;   :after org-roam
-;;   :config
-;;   (setq deft-recursive t)
-;;   (setq deft-use-filter-string-for-filename t)
-;;   (setq deft-default-extension "org")
-;;   (setq deft-directory org-roam-directory)
-;;   (evil-set-initial-state 'deft-mode 'emacs)
-;;   (spc-leader-def
-;;     "r/" 'deft))
 
 ;;;*** Functions
 
@@ -318,13 +272,15 @@
   (interactive)
   (find-file user-init-file))
 ;;;*** Evil
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode))
 (use-package evil
   ;; Evil mode is what makes emacs worth using. <3
   ;; It emulates vim inside of emacs.
   :config
-  (evil-set-undo-system 'undo-redo)
   (evil-mode 1)
-  
+  (evil-set-undo-system 'undo-tree)
   (evil-set-initial-state 'wdired-mode 'normal)
 
   (spc-leader-def
@@ -544,14 +500,14 @@
   )
 
 ;;;*** YASnippet
-(use-package yasnippet
-  :init
-  (yas-global-mode 1))
-(use-package yasnippet-snippets)
-(use-package ivy-yasnippet
-  :config
-  (spc-leader-def
-    "is" 'ivy-yasnippet))
+;; (use-package yasnippet
+;;   :init
+;;   (yas-global-mode 1))
+;; (use-package yasnippet-snippets)
+;; (use-package ivy-yasnippet
+;;   :config
+;;   (spc-leader-def
+;;     "is" 'ivy-yasnippet))
 
 ;;;*** Filetypes
 (use-package python-mode)
@@ -571,6 +527,7 @@
 
 (use-package vue-mode
   :config
+  (setq mmm-submode-decoration-level 0)
   (add-hook 'mmm-mode-hook
             (lambda ()
               (set-face-background 'mmm-default-submode-face "#ffffff"))))
@@ -595,10 +552,8 @@
 (use-package haml-mode
   :pin melpa-stable)
 
-;; (use-package js2-mode
-;;   :pin melpa-stable
-;;   (setq js2-mode-show-parse-errors nil)
-;;   (setq js2-mode-show-strict-warnings nil))
+(use-package js2-mode
+  :pin melpa-stable)
 
 (use-package rjsx-mode
   :pin melpa-stable
@@ -725,14 +680,18 @@
 
 ;; (use-package mu4e)
 
+(use-package ox-jira)
+
 (use-package org-tree-slide
   :pin melpa-stable
   :config
-  (define-key org-tree-slide-mode-map (kbd "s-<left>") 'org-tree-slide-move-previous-tree)
-  (define-key org-tree-slide-mode-map (kbd "s-<right>") 'org-tree-slide-move-next-tree)
+  (define-key org-tree-slide-mode-map (kbd "C-S-<left>") 'org-tree-slide-move-previous-tree)
+  (define-key org-tree-slide-mode-map (kbd "C-S-<right>") 'org-tree-slide-move-next-tree)
   ;;;; this profile lets you focus on todos. interesting!
   ;;(org-tree-slide-narrowing-control-profile)
-  (org-tree-slide-simple-profile))
+  (org-tree-slide-simple-profile)
+  (setq org-tree-slide-header "forklore.emu.media")
+  )
 ;; (use-package exec-path-from-shell
 ;;   :config
 ;;   (exec-path-from-shell-initialize))
@@ -816,6 +775,8 @@
              "<tab>" 'emmet-expand-line))
 
 (use-package lua-mode)
+
+(use-package shader-mode)
 
 (use-package which-key
   :config
@@ -941,8 +902,8 @@ http://flatuicolors.com/palette/defo
   ;; Nice colors!
   :config
   ;; Better font
-  ;; (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
-  (add-to-list 'default-frame-alist '(font . "IBM Plex Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono:pixelsize=16:weight=normal:slant=normal:width=normal:spacing=100:scalable=true"))
+  ;; (add-to-list 'default-frame-alist '(font . "IBM Plex Mono:pixelsize=16:weight=SemiBold:scalable=true"))
 
   ;; Change fringe size
   (set-fringe-mode '(10 . 10))
@@ -1163,7 +1124,7 @@ If in a project, copy the file path relative to the project root."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (tide company company-mode typescript-mode prettier-js vue-mode mu4e yasnippet-snippets ivy-yasnippet yasnippet deft org-roam org-journal counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
+    (tide company company-mode typescript-mode prettier-js vue-mode mu4e yasnippet-snippets ivy-yasnippet yasnippet deft org-roam counsel-projectile counsel ivy org-tree-slide docker swift-mode grip-mode command-log-mode wgrep csharp-mode ox-jira lab-themes exec-path-from-shell evil-numbers centered-cursor-mode auto-complete org-jira org-jira-mode engine-mode ddg-mode ddg-search ddg ox-jira npm-mode nvm ox-odt javascript-eslint csharp-mode masvn dsvn psvn sound-wav wav-sound play-sound writeroom-mode which-key web-mode use-package twig-mode smex scss-mode rvm rspec-mode rainbow-delimiters ox-gfm markdown-mode lua-mode json-mode js2-mode handlebars-sgml-mode haml-mode general flycheck flatui-theme evil-surround evil-paredit evil-org evil-matchit evil-magit evil-leader evil-commentary emmet-mode diminish default-text-scale ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -1,0 +1,12 @@
+font:
+  normal:
+    family: terminus
+  size: 9
+colors:
+  primary:
+    background: '#111111'
+    foreground: '#ffffff'
+window:
+  padding:
+    x: 10
+    y: 10

@@ -24,6 +24,7 @@ alias gcb="git rev-parse --abbrev-ref HEAD"
 alias gs="git status"
 alias gst="git stash"
 alias gsh="git show"
+alias ga="git add"
 # "Git branch history"
 alias gbrh="git for-each-ref --sort='-committerdate' --format='%(refname)' refs/heads | sed -e 's-refs/heads/--'"
 # Hub aliases

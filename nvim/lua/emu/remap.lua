@@ -1,3 +1,6 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 vim.keymap.set("n", "-", vim.cmd.Ex)
 vim.keymap.set("n", "<leader>w", vim.cmd.write)
 
@@ -24,6 +27,8 @@ vim.keymap.set("n", "<leader>s", vim.cmd.source)
 vim.keymap.set("n", "<leader>q", ":!chatblade -e ")
 vim.keymap.set("n", "<leader>Q", ":r!chatblade -e ")
 vim.keymap.set("v", "<leader>Q", ":r!chatblade -e ")
+
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
 
 -- easily toggle wrapping
 vim.keymap.set("n", "<leader>W", ":set wrap!<cr>:set wrap?<cr>")

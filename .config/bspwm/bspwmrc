@@ -1,0 +1,31 @@
+#! /bin/sh
+~/bin/use_external_display_if_available.sh
+
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+bspc monitor -d 1 2 3 4 5
+
+bspc config active_border_color "#333333"
+bspc config normal_border_color "#000000"
+bspc config focused_border_color "#FFCC00"
+
+bspc config border_width         6
+bspc config window_gap          6
+#bspc config top_padding         24
+
+bspc config split_ratio          0.52
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+
+bspc config focus_follows_pointer true
+
+bspc rule -a obsidian desktop='^5' follow=on
+
+bspc config merge_overlapping_monitors true
+bspc config remove_unplugged_monitors true
+
+if [ $1 -gt 0 ]; then
+  ~/bin/eww reload
+fi
+
+#feh --bg-fill ~/backgrounds/neat-lil-red-wall-door-thing.jpg

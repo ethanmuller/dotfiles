@@ -1,3 +1,14 @@
+vim.g.enable_cmp = false
+
+function Toggle_enable_cmp()
+  if vim.g.enable_cmp then
+    vim.g.enable_cmp = false
+  else
+    vim.g.enable_cmp = true
+  end
+  print("enable completion: "..tostring(vim.g.enable_cmp))
+end
+
 vim.opt.guicursor = ""
 
 vim.opt.nu = true
@@ -26,7 +37,7 @@ vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
 
-vim.opt.scrolloff = 999
+vim.opt.scrolloff = 20
 
 vim.opt.updatetime = 50
 
